@@ -1,3 +1,7 @@
+import 'package:financemanager/screens/calculator_screen.dart';
+import 'package:financemanager/screens/settings_screen.dart';
+import 'package:financemanager/screens/shoping_screen.dart';
+import 'package:financemanager/screens/support_screen.dart';
 import 'package:financemanager/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'main_tabs_screen.dart';
@@ -16,6 +20,9 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
   Animation<double> _scaleAnimation;
   Animation<double> _menuScaleAnimation;
   Animation<Offset> _slideAnimation;
+  int _selectedScreenIndex = 0;
+
+  List<Widget> _screens;
 
   Widget buildMenuButton() {
     return InkWell(
@@ -36,6 +43,13 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
   @override
   void initState() {
     super.initState();
+    _screens = [
+      MainTabsScreen(buildMenuButton),
+      ShoppingScreen(buildMenuButton),
+      CalculatorScreen(buildMenuButton),
+      SettingsScreen(buildMenuButton),
+      SupportScreen(buildMenuButton),
+    ];
     _controller = AnimationController(vsync: this, duration: duration);
     _scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(_controller);
     _menuScaleAnimation =
@@ -83,34 +97,84 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text("Mis Finanzas",
-                          style: TextStyle(color: Colors.white, fontSize: 22)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedScreenIndex = 0;
+                          _controller.reverse();
+                          isCollapsed = true;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text("Mis Finanzas",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 22)),
+                      ),
                     ),
                     SizedBox(height: 10),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text("Calculadora",
-                          style: TextStyle(color: Colors.white, fontSize: 22)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedScreenIndex = 1;
+                          _controller.reverse();
+                          isCollapsed = true;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text("Lista de Compras",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 22)),
+                      ),
                     ),
                     SizedBox(height: 10),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text("Lista de compras",
-                          style: TextStyle(color: Colors.white, fontSize: 22)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedScreenIndex = 2;
+                          _controller.reverse();
+                          isCollapsed = true;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text("Calculadora",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 22)),
+                      ),
                     ),
                     SizedBox(height: 10),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text("Configuración",
-                          style: TextStyle(color: Colors.white, fontSize: 22)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedScreenIndex = 3;
+                          _controller.reverse();
+                          isCollapsed = true;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text("Configuración",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 22)),
+                      ),
                     ),
                     SizedBox(height: 10),
-                    FittedBox(
-                      fit: BoxFit.contain,
-                      child: Text("Soporte",
-                          style: TextStyle(color: Colors.white, fontSize: 22)),
+                    GestureDetector(
+                      onTap: () {
+                        setState(() {
+                          _selectedScreenIndex = 4;
+                          _controller.reverse();
+                          isCollapsed = true;
+                        });
+                      },
+                      child: FittedBox(
+                        fit: BoxFit.contain,
+                        child: Text("Soporte",
+                            style:
+                                TextStyle(color: Colors.white, fontSize: 22)),
+                      ),
                     ),
                     SizedBox(height: 10),
                   ]),
@@ -135,7 +199,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
           borderRadius: BorderRadius.all(Radius.circular(40)),
           elevation: 12,
           color: CARDS_COLOR,
-          child: MainTabsScreen(buildMenuButton),
+          child: _screens[_selectedScreenIndex],
         ),
       ),
     );

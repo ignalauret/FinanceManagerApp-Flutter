@@ -8,9 +8,9 @@ import 'package:provider/provider.dart';
 import '../utils/constants.dart';
 import '../widgets/modalSheets/new_transaction_sheet.dart';
 import '../widgets/modalSheets/new_wallet_sheet.dart';
-import 'home_screen.dart';
-import 'transactions_screen.dart';
-import 'wallets_screen.dart';
+import 'home_tab.dart';
+import 'transactions_tab.dart';
+import 'wallets_tab.dart';
 
 class MainTabsScreen extends StatefulWidget {
   final Function buildMenuButton;
@@ -24,6 +24,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   int _tabIndex = 0;
   DbHelper dbHelper = DbHelper();
 
+  /* ******* DB managmenet ******** */
   void setupDB() async {
     dbHelper.db.then((_) {
       loadDb();
@@ -41,6 +42,8 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     dbHelper.saveWallet(newWallet);
     dbHelper.saveWallet(newWallet2);
   }
+
+  /* ***** Events ******** */
 
   void startAddNewExpense(BuildContext ctx) {
     showModalBottomSheet(
@@ -65,6 +68,8 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
           return NewWalletSheet();
         });
   }
+
+  /* ****** Build Methods ***** */
 
   Widget _buildAppBarTitle() {
     switch (_tabIndex) {
@@ -100,10 +105,8 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     return null;
   }
 
-  @override
-  Widget build(BuildContext context) {
-    getWallets(context);
-    final appBar = AppBar(
+  Widget _buildAppBar(BuildContext context) {
+    return AppBar(
       title: _buildAppBarTitle(),
       backgroundColor: BACKGROUND_COLOR,
       elevation: 4,
@@ -165,6 +168,11 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
           ),
       ],
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    getWallets(context);
 
     final tabs = [
       HomeScreen(),
@@ -175,7 +183,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
 
     return Scaffold(
       backgroundColor: BACKGROUND_COLOR,
-      appBar: appBar,
+      appBar: _buildAppBar(context),
       body: tabs[_tabIndex],
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: BACKGROUND_COLOR,
@@ -214,5 +222,3 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     );
   }
 }
-
-
