@@ -1,3 +1,4 @@
+import 'package:financemanager/Database/db_helper.dart';
 import 'package:financemanager/models/transaction.dart';
 import 'package:financemanager/models/wallet.dart';
 import 'package:financemanager/utils/tools.dart';
@@ -31,36 +32,36 @@ class TransactionsWalletsProvider with ChangeNotifier {
         walletId: "1"),
   ];
 
-  List<Wallet> _wallets = [
-    Wallet(
-      id: "0",
-      name: "Wallet 1",
-      color: Colors.blue,
-      startingBalance: 50,
-    ),
-    Wallet(
-      id: "1",
-      name: "Wallet 2",
-      color: Colors.red,
-    ),
-    Wallet(
-      id: "2",
-      name: "Wallet 3",
-      color: Colors.blue,
-      startingBalance: 50,
-    ),
-    Wallet(
-      id: "3",
-      name: "Wallet 4",
-      color: Colors.red,
-    ),
-    Wallet(
-      id: "4",
-      name: "Wallet 5",
-      color: Colors.blue,
-      startingBalance: 50,
-    ),
-  ];
+  List<Wallet> wallets = [];
+//    Wallet(
+//      id: "0",
+//      name: "Wallet 1",
+//      color: Colors.blue,
+//      startingBalance: 50,
+//    ),
+//    Wallet(
+//      id: "1",
+//      name: "Wallet 2",
+//      color: Colors.red,
+//    ),
+//    Wallet(
+//      id: "2",
+//      name: "Wallet 3",
+//      color: Colors.blue,
+//      startingBalance: 50,
+//    ),
+//    Wallet(
+//      id: "3",
+//      name: "Wallet 4",
+//      color: Colors.red,
+//    ),
+//    Wallet(
+//      id: "4",
+//      name: "Wallet 5",
+//      color: Colors.blue,
+//      startingBalance: 50,
+//    ),
+  //];
 
   /* ************* Getters *************** */
   List<Transaction> get transactions {
@@ -84,9 +85,9 @@ class TransactionsWalletsProvider with ChangeNotifier {
     return recentTransactions;
   }
 
-  List<Wallet> get wallets {
-    return [..._wallets];
-  }
+//  List<Wallet> get wallets {
+//    return [..._wallets];
+//  }
 
   /* ************** Queries *************** */
   List<Transaction> findTransactionByDate(DateTime date) {
@@ -94,7 +95,7 @@ class TransactionsWalletsProvider with ChangeNotifier {
   }
 
   Wallet findWalletById(String id) {
-    return _wallets.firstWhere((wal) => wal.id == id);
+    return wallets.firstWhere((wal) => wal.id == id);
   }
 
   double get globalIncomes {
@@ -112,7 +113,7 @@ class TransactionsWalletsProvider with ChangeNotifier {
 
   double get globalBalance {
     double total = globalIncomes - globalExpenses;
-    _wallets.forEach((wal) => total += wal.startingBalance);
+    wallets.forEach((wal) => total += wal.startingBalance);
     return total;
   }
 
@@ -131,7 +132,7 @@ class TransactionsWalletsProvider with ChangeNotifier {
   }
 
   String get _newWalletId {
-    return (int.parse(_wallets.last.id) + 1).toString();
+    return (int.parse(wallets.last.id) + 1).toString();
   }
 
   void deleteTransaction(String id) {
@@ -169,12 +170,12 @@ class TransactionsWalletsProvider with ChangeNotifier {
       startingBalance: initialBalance,
       id: _newWalletId,
     );
-    _wallets.add(newWallet);
+    wallets.add(newWallet);
     notifyListeners();
   }
 
   void deleteWallet(String id) {
-    _wallets.removeWhere((wal) => wal.id == id);
+    wallets.removeWhere((wal) => wal.id == id);
     notifyListeners();
   }
 }

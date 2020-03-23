@@ -1,20 +1,46 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'transactions_screen.dart';
-import 'wallets_screen.dart';
-import '../widgets/modalSheets/new_transaction_sheet.dart';
-import '../widgets/modalSheets/new_wallet_sheet.dart';
+import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/models/wallet.dart';
+import 'package:financemanager/providers/wallet_transactions_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../utils/constants.dart';
+import '../widgets/modalSheets/new_transaction_sheet.dart';
+import '../widgets/modalSheets/new_wallet_sheet.dart';
 import 'home_screen.dart';
+import 'transactions_screen.dart';
+import 'wallets_screen.dart';
 
 class MainTabsScreen extends StatefulWidget {
+  final Function buildMenuButton;
+
+  MainTabsScreen(this.buildMenuButton);
   @override
   _MainTabsScreenState createState() => _MainTabsScreenState();
 }
 
 class _MainTabsScreenState extends State<MainTabsScreen> {
   int _tabIndex = 0;
+  DbHelper dbHelper = DbHelper();
+
+  void setupDB() async {
+    dbHelper.db.then((_) {
+      loadDb();
+    });
+  }
+
+  void getWallets(BuildContext ctx) async {
+    Provider.of<TransactionsWalletsProvider>(ctx).wallets =
+        await dbHelper.getWallets();
+  }
+
+  void loadDb() {
+    final newWallet = Wallet(name: "TestDb", id: "0");
+    final newWallet2 = Wallet(name: "TestDb2", id: "1");
+    dbHelper.saveWallet(newWallet);
+    dbHelper.saveWallet(newWallet2);
+  }
 
   void startAddNewExpense(BuildContext ctx) {
     showModalBottomSheet(
@@ -41,46 +67,47 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   }
 
   Widget _buildAppBarTitle() {
-    switch(_tabIndex) {
-      case 0 : return Text(
-        "Home",
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
-      case 1 : return Text(
-        "Transacciones",
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
-      case 2 : return Text(
-        "Estadísticas",
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
-      case 3 : return Text(
-        "Billeteras",
-        style: TextStyle(
-          color: Colors.grey,
-        ),
-      );
+    switch (_tabIndex) {
+      case 0:
+        return Text(
+          "Home",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        );
+      case 1:
+        return Text(
+          "Transacciones",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        );
+      case 2:
+        return Text(
+          "Estadísticas",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        );
+      case 3:
+        return Text(
+          "Billeteras",
+          style: TextStyle(
+            color: Colors.grey,
+          ),
+        );
     }
+    return null;
   }
 
   @override
   Widget build(BuildContext context) {
+    getWallets(context);
     final appBar = AppBar(
       title: _buildAppBarTitle(),
       backgroundColor: BACKGROUND_COLOR,
       elevation: 4,
-      leading: IconButton(
-        icon: Icon(
-          Icons.menu,
-        ),
-        onPressed: () {},
-      ),
+      leading: widget.buildMenuButton(),
       actions: <Widget>[
         if (_tabIndex == 1)
           IconButton(
@@ -127,14 +154,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
               ];
             },
           ),
-//          IconButton(
-//            icon: Icon(
-//              Icons.add,
-//            ),
-//            onPressed: () {
-//              startAddNewExpense(context);
-//            },
-//          ),
         if (_tabIndex == 3)
           IconButton(
             icon: Icon(
@@ -195,3 +214,5 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     );
   }
 }
+
+

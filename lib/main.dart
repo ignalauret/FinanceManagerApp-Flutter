@@ -1,6 +1,7 @@
+
 import 'providers/wallet_transactions_provider.dart';
 
-import 'screens/main_tabs_screen.dart';
+import 'screens/menu_dashboard_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
           canvasColor: Colors.transparent,
           primarySwatch: Colors.blue,
         ),
-        home: MainTabsScreen(),
+        home: MenuDashboardPage(),
       ),
     );
   }
