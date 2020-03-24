@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../providers/wallet_transactions_provider.dart';
 import '../widgets/cards/total_balance_card.dart';
 import '../widgets/transactionsList/transactions_list.dart';
 import '../widgets/cards/balance_card.dart';
@@ -15,26 +13,25 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-    final providerData = Provider.of<TransactionsWalletsProvider>(context);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        TotalBalanceCard(providerData.globalBalance.toStringAsFixed(2)),
+        TotalBalanceCard("35"),
         Row(
           children: <Widget>[
             Expanded(
               child: BalanceCard(
                 title: "Ingresos",
                 color: INCOME_COLOR,
-                balance: providerData.globalIncomes,
+                balance: 35,
               ),
             ),
             Expanded(
               child: BalanceCard(
                 title: "Gastos",
                 color: EXPENSE_COLOR,
-                balance: providerData.globalExpenses,
+                balance: 35,
               ),
             ),
           ],

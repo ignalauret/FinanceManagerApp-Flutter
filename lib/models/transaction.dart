@@ -41,13 +41,22 @@ const TransactionCategoryIcon = {
   TransactionCategories.Compras: Icons.shop,
 };
 
+const TransactionCategoryList = [
+  TransactionCategories.Salario,
+  TransactionCategories.Inversiones,
+  TransactionCategories.Compras,
+  TransactionCategories.Salud,
+  TransactionCategories.Comida,
+  TransactionCategories.Transporte,
+];
+
 class Transaction {
-  final String id; // PK
+  final int id; // PK
   final String note;
   final double amount;
   final DateTime date;
   final TransactionCategories category;
-  final String walletId;
+  final int walletId;
   final bool isExpense;
 
   // Los hago named para no tener que acordarme el orden
@@ -60,4 +69,13 @@ class Transaction {
     @required this.walletId,
     @required this.isExpense,
   });
+
+  Transaction.fromJson(dynamic obj)
+      : this.id = obj['tid'],
+        this.note = obj['note'],
+        this.amount = obj['amount'],
+        this.walletId = obj['walletid'],
+        this.isExpense = obj['isexpense'] == 1,
+        this.date = DateTime.parse(obj['date'] as String),
+        this.category = TransactionCategoryList[obj['category']];
 }

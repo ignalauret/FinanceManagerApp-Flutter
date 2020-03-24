@@ -1,10 +1,8 @@
-import '../../providers/wallet_transactions_provider.dart';
 import '../../utils/constants.dart';
 import '../calculator/calculator_dialog.dart';
 import '../userInput/detail_input_button.dart';
 import '../userInput/text_input.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class NewWalletSheet extends StatefulWidget {
   @override
@@ -15,18 +13,18 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
   String _calculatorInput = "0";
   String _selectedNote = "";
 
-  void submitData(BuildContext ctx) {
-    final enteredNote = _selectedNote;
-    final enteredAmount = double.parse(_calculatorInput);
-    if (enteredNote.isEmpty) return;
-
-    Provider.of<TransactionsWalletsProvider>(context, listen: false).addWallet(
-      name: _selectedNote,
-      initialBalance: enteredAmount,
-    );
-
-    Navigator.of(context).pop();
-  }
+//  void submitData(BuildContext ctx) {
+//    final enteredNote = _selectedNote;
+//    final enteredAmount = double.parse(_calculatorInput);
+//    if (enteredNote.isEmpty) return;
+//
+//    Provider.of<TransactionsWalletsProvider>(context, listen: false).addWallet(
+//      name: _selectedNote,
+//      initialBalance: enteredAmount,
+//    );
+//
+//    Navigator.of(context).pop();
+//  }
 
   void _submitCalculatorDialog(String value) {
     setState(() {
@@ -92,7 +90,7 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
                 },
               ),
               InkWell(
-                onTap: () => submitData(context),
+                onTap: () => {},//submitData(context),
                 child: Card(
                   margin: const EdgeInsets.all(10),
                   color: CARDS_COLOR,

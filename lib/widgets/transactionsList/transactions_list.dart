@@ -1,13 +1,11 @@
-import '../../providers/wallet_transactions_provider.dart';
 import 'transactions_list_item.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final transactionsData = Provider.of<TransactionsWalletsProvider>(context);
-    final transactions = transactionsData.recentTransactions;
+    //final transactionsData = Provider.of<TransactionsWalletsProvider>(context);
+    final transactions = [];
 
     return Container(
       child: Container(
@@ -27,7 +25,7 @@ class TransactionsList extends StatelessWidget {
                   return Dismissible(
                     key: Key(transactions[index].id),
                     onDismissed: (direction) {
-                      transactionsData.deleteTransaction(transactions[index].id);
+                      //transactionsData.deleteTransaction(transactions[index].id);
                     },
                     child: TransactionListItem(transactions[index], true),
                   );

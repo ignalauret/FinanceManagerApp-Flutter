@@ -1,9 +1,8 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/models/transaction.dart';
 import 'package:financemanager/models/wallet.dart';
-import 'package:financemanager/providers/wallet_transactions_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../utils/constants.dart';
 import '../widgets/modalSheets/new_transaction_sheet.dart';
@@ -22,25 +21,41 @@ class MainTabsScreen extends StatefulWidget {
 
 class _MainTabsScreenState extends State<MainTabsScreen> {
   int _tabIndex = 0;
-  DbHelper dbHelper = DbHelper();
 
   /* ******* DB managmenet ******** */
-  void setupDB() async {
-    dbHelper.db.then((_) {
-      loadDb();
-    });
+
+  @override
+  void initState() {
+    super.initState();
+    loadDB();
   }
 
-  void getWallets(BuildContext ctx) async {
-    Provider.of<TransactionsWalletsProvider>(ctx).wallets =
-        await dbHelper.getWallets();
-  }
-
-  void loadDb() {
-    final newWallet = Wallet(name: "TestDb", id: "0");
-    final newWallet2 = Wallet(name: "TestDb2", id: "1");
-    dbHelper.saveWallet(newWallet);
-    dbHelper.saveWallet(newWallet2);
+  void loadDB() async {
+    final dbHelper = DBHelper();
+    final wallet = Wallet(id: 0, name: "TestDB");
+    final wallet1 = Wallet(id: 1, name: "TestDB1");
+    final wallet2 = Wallet(id: 2, name: "TestDB2");
+    dbHelper.addNewWallet(wallet);
+    dbHelper.addNewWallet(wallet1);
+    dbHelper.addNewWallet(wallet2);
+    final tran1 = Transaction(
+        id: 0,
+        amount: 45.20,
+        date: DateTime.now().subtract(Duration(days: 2)),
+        note: "Test DB",
+        category: TransactionCategories.Transporte,
+        walletId: 0,
+        isExpense: false);
+    final tran2 = Transaction(
+        id: 1,
+        amount: 245.20,
+        date: DateTime.now(),
+        note: "Test DB2",
+        category: TransactionCategories.Salario,
+        walletId: 0,
+        isExpense: true);
+    dbHelper.addNewTransaction(tran1);
+    dbHelper.addNewTransaction(tran2);
   }
 
   /* ***** Events ******** */
@@ -172,8 +187,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    getWallets(context);
-
     final tabs = [
       HomeScreen(),
       TransactionsScreen(),

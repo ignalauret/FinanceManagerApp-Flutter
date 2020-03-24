@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class Wallet {
-  final String id;
+  final int id;
   final String name;
   double startingBalance;
   final Color color;

@@ -1,5 +1,4 @@
 import '../../models/transaction.dart';
-import '../../providers/wallet_transactions_provider.dart';
 import '../../utils/constants.dart';
 import '../calculator/calculator_dialog.dart';
 import '../cards/category_selection_card.dart';
@@ -7,7 +6,6 @@ import '../color_bar.dart';
 import '../userInput/detail_input_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 
 import '../userInput/text_input.dart';
 
@@ -25,24 +23,24 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
   String _selectedNote = "";
   String _selectedWalletId = "0";
 
-  void submitData(BuildContext ctx, TransactionsWalletsProvider providerData) {
-    final enteredNote = _selectedNote;
-    final enteredAmount = double.parse(_calculatorInput);
-    if (enteredNote.isEmpty || enteredAmount <= 0 || _selectedWalletId.isEmpty)
-      return;
-
-    providerData.addTransaction(
-      note: enteredNote,
-      amount: enteredAmount,
-      date: _selectedDate,
-      isExpense: widget.isExpense,
-      walletId: _selectedWalletId,
-      category: widget.isExpense
-          ? expenseCategories[selectedCategoryIndex]
-          : incomeCategories[selectedCategoryIndex],
-    );
-    Navigator.of(context).pop();
-  }
+//  void submitData(BuildContext ctx, TransactionsWalletsProvider providerData) {
+//    final enteredNote = _selectedNote;
+//    final enteredAmount = double.parse(_calculatorInput);
+//    if (enteredNote.isEmpty || enteredAmount <= 0 || _selectedWalletId.isEmpty)
+//      return;
+//
+//    providerData.addTransaction(
+//      note: enteredNote,
+//      amount: enteredAmount,
+//      date: _selectedDate,
+//      isExpense: widget.isExpense,
+//      walletId: _selectedWalletId,
+//      category: widget.isExpense
+//          ? expenseCategories[selectedCategoryIndex]
+//          : incomeCategories[selectedCategoryIndex],
+//    );
+//    Navigator.of(context).pop();
+//  }
 
   void _presentDatePicker() {
     showDatePicker(
@@ -86,7 +84,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final providerData = Provider.of<TransactionsWalletsProvider>(context, listen: false);
+    final providerData = null; //Provider.of<TransactionsWalletsProvider>(context, listen: false);
 
     return SingleChildScrollView(
       child: Card(
@@ -201,7 +199,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                 },
               ),
               InkWell(
-                onTap: () => submitData(context, providerData),
+                onTap: () {}, //submitData(context, providerData),
                 child: Card(
                   margin: const EdgeInsets.all(10),
                   color: CARDS_COLOR,

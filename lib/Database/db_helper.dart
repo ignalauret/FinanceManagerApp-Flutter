@@ -1,53 +1,90 @@
 import 'dart:async';
 
+import 'package:financemanager/models/transaction.dart' as tran;
 import 'package:financemanager/models/wallet.dart';
-import 'package:financemanager/providers/wallet_transactions_provider.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:path/path.dart';
-import 'package:provider/provider.dart';
 import 'package:sqflite/sqflite.dart';
 
-class DbHelper {
-  static Database _db;
+class DBHelper {
+  static Database _dbInstance;
 
+  /* *************** Database creation *************** */
   Future<Database> get db async {
-    if (_db != null) return _db;
-    _db = await initDb();
-    return _db;
+    if (_dbInstance == null) _dbInstance = await initDB();
+    return _dbInstance;
   }
 
-  initDb() async {
+  Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'demo.db');
-    var theDb = await openDatabase(path, version: 1, onCreate: _onCreate);
-    return theDb;
+    String path = join(databasesPath, 'finance_manager_db5.db');
+    var db = await openDatabase(path, version: 1, onCreate: onCreateFunc);
+    return db;
   }
 
-  void _onCreate(Database db, int version) async {
+  void onCreateFunc(Database db, int version) async {
+    // create table
     await db
-        .execute("CREATE TABLE billeteras(id TEXT PRIMARY KEY, nombre TEXT)");
-    print("Tabla creada");
+        .execute('CREATE TABLE wallet(wid INTEGER PRIMARY KEY, name TEXT);');
+    await db.execute(
+        'CREATE TABLE tran(tid INTEGER PRIMARY KEY, note TEXT, amount REAL, category INTEGER, walletid INTEGER, isexpense INTEGER, date TEXT);');
   }
 
-  Future<int> saveWallet(Wallet wallet) async {
-    var dbClient = await db;
-    int res = await dbClient.insert("billeteras", wallet.toJson());
-    print("Tabla billetera insertada");
-    return res;
-  }
+  /* ***************** CRUD Functions ******************* */
 
+  // Get all wallets
   Future<List<Wallet>> getWallets() async {
-    var dbClient = await db;
-    List<Map> list =
-        await dbClient.rawQuery("SELECT * FROM billeteras");
-    List<Wallet> wallets = List();
+    var dbConnection = await db;
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM wallet');
+    List<Wallet> wallets = new List();
     for (int i = 0; i < list.length; i++) {
-      wallets.add(Wallet(
-        id: list[i]["id"],
-        name: list[i]["name"],
-      ));
+      Wallet wallet = new Wallet.fromJson(list[i]);
+
+      wallets.add(wallet);
     }
-    print(wallets.length);
     return wallets;
+  }
+
+  // Get all Transactions
+  Future<List<tran.Transaction>> getTransactions() async {
+    var dbConnection = await db;
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM tran');
+    List<tran.Transaction> transactions = new List();
+    for (int i = 0; i < list.length; i++) {
+      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      transactions.add(transaction);
+    }
+    return transactions;
+  }
+
+  // Get recent transactions
+  Future<List<tran.Transaction>> getRecentTransactions() async {
+    var dbConnection = await db;
+    List<Map> list = await dbConnection.rawQuery('SELECT * FROM tran');
+    List<tran.Transaction> transactions = new List();
+    for (int i = 0; i < list.length; i++) {
+      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      transactions.add(transaction);
+    }
+    return transactions;
+  }
+
+  // add new person
+  void addNewWallet(Wallet wallet) async {
+    var dbConnection = await db;
+    String query = """
+        INSERT INTO wallet(wid, name) VALUES('${wallet.id}','${wallet.name}')
+        """;
+    await dbConnection.transaction((transaction) async {
+      return await transaction.rawInsert(query);
+    });
+  }
+
+  void addNewTransaction(tran.Transaction trans) async {
+    var dbConnection = await db;
+    String query = """
+        INSERT INTO tran(tid, note, amount, category, walletid, isexpense, date) VALUES('${trans.id}','${trans.note}','${trans.amount}','${tran.TransactionCategoryList.indexOf(trans.category)}','${trans.walletId}','${trans.isExpense ? 1 : 0}','${trans.date.toIso8601String()}')""";
+    await dbConnection.transaction((transaction) async {
+      return await transaction.rawInsert(query);
+    });
   }
 }
