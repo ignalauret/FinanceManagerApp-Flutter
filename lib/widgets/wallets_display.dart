@@ -11,18 +11,11 @@ class WalletsDisplay extends StatelessWidget {
 
   WalletsDisplay(this.selectedIndex, this.selectWallet);
 
-  Future<List<Wallet>> getWalletsFromDB() async {
-    print("Get Wallets from DB Method");
-    var dbHelper = DBHelper();
-    Future<List<Wallet>> wallets = dbHelper.getWallets();
-    return wallets;
-  }
-
   @override
   Widget build(BuildContext context) {
     return Container(
         child: FutureBuilder<List<Wallet>>(
-            future: getWalletsFromDB(),
+            future: DBHelper().getWallets(),
             builder: (context, snapshot) {
               print(snapshot.data);
 

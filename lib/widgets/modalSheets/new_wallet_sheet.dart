@@ -90,7 +90,7 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
                 },
               ),
               InkWell(
-                onTap: () => {},//submitData(context),
+                onTap: () => {}, //submitData(context),
                 child: Card(
                   margin: const EdgeInsets.all(10),
                   color: CARDS_COLOR,

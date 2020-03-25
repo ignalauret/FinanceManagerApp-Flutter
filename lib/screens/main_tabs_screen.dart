@@ -27,7 +27,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   @override
   void initState() {
     super.initState();
-    loadDB();
+    //loadDB();
   }
 
   void loadDB() async {
@@ -39,9 +39,9 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     dbHelper.addNewWallet(wallet1);
     dbHelper.addNewWallet(wallet2);
     final tran1 = Transaction(
-        id: 0,
+        id: 3,
         amount: 45.20,
-        date: DateTime.now().subtract(Duration(days: 2)),
+        date: DateTime.now().subtract(Duration(days: 10)),
         note: "Test DB",
         category: TransactionCategories.Transporte,
         walletId: 0,

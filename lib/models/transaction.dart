@@ -1,3 +1,4 @@
+import 'package:financemanager/utils/tools.dart';
 import 'package:flutter/material.dart';
 
 import '../utils/constants.dart';
@@ -76,6 +77,6 @@ class Transaction {
         this.amount = obj['amount'],
         this.walletId = obj['walletid'],
         this.isExpense = obj['isexpense'] == 1,
-        this.date = DateTime.parse(obj['date'] as String),
+        this.date = intToDate(obj['date'] as int),
         this.category = TransactionCategoryList[obj['category']];
 }

@@ -84,7 +84,8 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final providerData = null; //Provider.of<TransactionsWalletsProvider>(context, listen: false);
+    final providerData =
+        null; //Provider.of<TransactionsWalletsProvider>(context, listen: false);
 
     return SingleChildScrollView(
       child: Card(

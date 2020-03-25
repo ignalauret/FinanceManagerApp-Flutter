@@ -7,12 +7,6 @@ import 'package:provider/provider.dart';
 import '../widgets/cards/transactions_block_card.dart';
 
 class TransactionsScreen extends StatelessWidget {
-  Future<List<Transaction>> getTransactionsFromDB() async {
-    print("Get Transactions from DB Method");
-    var dbHelper = DBHelper();
-    Future<List<Transaction>> transactions = dbHelper.getTransactions();
-    return transactions;
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +14,7 @@ class TransactionsScreen extends StatelessWidget {
       children: <Widget>[
         Expanded(
             child: FutureBuilder<List<Transaction>>(
-                future: getTransactionsFromDB(),
+                future: DBHelper().getTransactions(),
                 builder: (context, snapshot) {
                   print(snapshot.data);
 

@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:financemanager/models/transaction.dart' as tran;
 import 'package:financemanager/models/wallet.dart';
+import 'package:financemanager/utils/tools.dart';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -16,17 +17,19 @@ class DBHelper {
 
   Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'finance_manager_db5.db');
+    String path = join(databasesPath, 'finance_manager_db7.db');
     var db = await openDatabase(path, version: 1, onCreate: onCreateFunc);
     return db;
   }
 
   void onCreateFunc(Database db, int version) async {
     // create table
-    await db
-        .execute('CREATE TABLE wallet(wid INTEGER PRIMARY KEY, name TEXT);');
     await db.execute(
-        'CREATE TABLE tran(tid INTEGER PRIMARY KEY, note TEXT, amount REAL, category INTEGER, walletid INTEGER, isexpense INTEGER, date TEXT);');
+      'CREATE TABLE wallet(wid INTEGER PRIMARY KEY, name TEXT);',
+    );
+    await db.execute(
+      'CREATE TABLE tran(tid INTEGER PRIMARY KEY, note TEXT, amount REAL, category INTEGER, walletid INTEGER, isexpense INTEGER, date INTEGER);',
+    );
   }
 
   /* ***************** CRUD Functions ******************* */
@@ -56,16 +59,14 @@ class DBHelper {
     return transactions;
   }
 
-  // Get recent transactions
-  Future<List<tran.Transaction>> getRecentTransactions() async {
-    var dbConnection = await db;
-    List<Map> list = await dbConnection.rawQuery('SELECT * FROM tran');
-    List<tran.Transaction> transactions = new List();
-    for (int i = 0; i < list.length; i++) {
-      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
-      transactions.add(transaction);
-    }
-    return transactions;
+  // Delete wallet
+  Future<int> deleteWallet(int id) async {
+    return (await db).delete('wallet', where: 'wid = ?', whereArgs: [id]);
+  }
+
+  // Delete transaction
+  Future<int> deleteTransaction(int id) async {
+    return (await db).delete('tran', where: 'tid = ?', whereArgs: [id]);
   }
 
   // add new person
@@ -82,9 +83,25 @@ class DBHelper {
   void addNewTransaction(tran.Transaction trans) async {
     var dbConnection = await db;
     String query = """
-        INSERT INTO tran(tid, note, amount, category, walletid, isexpense, date) VALUES('${trans.id}','${trans.note}','${trans.amount}','${tran.TransactionCategoryList.indexOf(trans.category)}','${trans.walletId}','${trans.isExpense ? 1 : 0}','${trans.date.toIso8601String()}')""";
+        INSERT INTO tran(tid, note, amount, category, walletid, isexpense, date) VALUES('${trans.id}','${trans.note}','${trans.amount}','${tran.TransactionCategoryList.indexOf(trans.category)}','${trans.walletId}','${trans.isExpense ? 1 : 0}','${dateToInt(trans.date)}')
+        """;
     await dbConnection.transaction((transaction) async {
       return await transaction.rawInsert(query);
     });
+  }
+
+  /* ********* Queries *********** */
+
+// Get transactions from last week
+  Future<List<tran.Transaction>> getRecentTransactions() async {
+    var dbConnection = await db;
+    final date = dateToInt(DateTime.now().subtract(Duration(days: 7)));
+    List<Map> list = await dbConnection.query('tran', where: 'date > $date');
+    List<tran.Transaction> transactions = new List();
+    for (int i = 0; i < list.length; i++) {
+      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      transactions.add(transaction);
+    }
+    return transactions;
   }
 }
