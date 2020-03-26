@@ -1,3 +1,4 @@
+import 'package:financemanager/utils/constants.dart';
 import 'package:flutter/material.dart';
 
 class Wallet {
@@ -7,16 +8,15 @@ class Wallet {
   final Color color;
 
   Wallet({
-    @required this.id,
+    this.id,
     @required this.name,
     this.color = Colors.amber,
     this.startingBalance = 0,
   });
 
   Wallet.fromJson(dynamic obj)
-      : this.id = obj["id"],
+      : this.id = obj["wid"],
         this.name = obj["name"],
-        this.color = Colors.amber;
-
-  Map<String, dynamic> toJson() => {"name": name, "id": id};
+        this.color = COLOR_PALETTE[obj["color"]],
+        this.startingBalance = obj["startingbalance"];
 }

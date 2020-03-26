@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../utils/constants.dart';
 
 class TotalBalanceCard extends StatelessWidget {
-  final String balance;
+  final double balance;
 
   TotalBalanceCard(this.balance);
 
@@ -30,7 +30,7 @@ class TotalBalanceCard extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: balance,
+                    text: balance.toStringAsFixed(2),
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 27,

@@ -1,3 +1,6 @@
+import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/models/wallet.dart';
+
 import '../../models/transaction.dart';
 import '../../utils/constants.dart';
 import '../calculator/calculator_dialog.dart';
@@ -21,26 +24,27 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
   DateTime _selectedDate = DateTime.now();
   int selectedCategoryIndex = 0;
   String _selectedNote = "";
-  String _selectedWalletId = "0";
+  int _selectedWalletId = 1;
 
-//  void submitData(BuildContext ctx, TransactionsWalletsProvider providerData) {
-//    final enteredNote = _selectedNote;
-//    final enteredAmount = double.parse(_calculatorInput);
-//    if (enteredNote.isEmpty || enteredAmount <= 0 || _selectedWalletId.isEmpty)
-//      return;
-//
-//    providerData.addTransaction(
-//      note: enteredNote,
-//      amount: enteredAmount,
-//      date: _selectedDate,
-//      isExpense: widget.isExpense,
-//      walletId: _selectedWalletId,
-//      category: widget.isExpense
-//          ? expenseCategories[selectedCategoryIndex]
-//          : incomeCategories[selectedCategoryIndex],
-//    );
-//    Navigator.of(context).pop();
-//  }
+  void submitData(BuildContext ctx) {
+    final enteredNote = _selectedNote;
+    final enteredAmount = double.parse(_calculatorInput);
+    if (enteredNote.isEmpty || enteredAmount <= 0) return;
+
+    DBHelper().addNewTransaction(
+      Transaction(
+        note: enteredNote,
+        amount: enteredAmount,
+        date: _selectedDate,
+        isExpense: widget.isExpense,
+        walletId: _selectedWalletId,
+        category: widget.isExpense
+            ? expenseCategories[selectedCategoryIndex]
+            : incomeCategories[selectedCategoryIndex],
+      ),
+    );
+    Navigator.of(context).pop();
+  }
 
   void _presentDatePicker() {
     showDatePicker(
@@ -84,9 +88,6 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
-    final providerData =
-        null; //Provider.of<TransactionsWalletsProvider>(context, listen: false);
-
     return SingleChildScrollView(
       child: Card(
         color: BACKGROUND_COLOR,
@@ -115,37 +116,49 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                     style: TITLE_STYLE,
                   ),
                   Theme(
-                    data: Theme.of(context).copyWith(
-                      canvasColor: CARDS_COLOR,
-                    ),
-                    child: DropdownButton<String>(
-                      style: MENU_TEXT_STYLE,
-                      value: providerData.findWalletById(_selectedWalletId).id,
-                      items: providerData.wallets
-                          .map((wal) => DropdownMenuItem<String>(
-                                value: wal.id,
-                                child: Row(
-                                  children: <Widget>[
-                                    ColorBar(
-                                      color: wal.color,
-                                      fixedHeight: true,
-                                      height: 20,
-                                    ),
-                                    Text(
-                                      wal.name,
-                                      style: MENU_TEXT_STYLE,
-                                    ),
-                                  ],
-                                ),
-                              ))
-                          .toList(),
-                      onChanged: (val) {
-                        setState(() {
-                          _selectedWalletId = val;
-                        });
-                      },
-                    ),
-                  ),
+                      data: Theme.of(context).copyWith(
+                        canvasColor: CARDS_COLOR,
+                      ),
+                      child: FutureBuilder<List<Wallet>>(
+                          future: DBHelper().getWallets(),
+                          builder: (context, snapshot) {
+                            if (snapshot != null && snapshot.hasData) {
+                              return DropdownButton<int>(
+                                style: MENU_TEXT_STYLE,
+                                value: snapshot.data
+                                    .firstWhere(
+                                        (wal) => wal.id == _selectedWalletId)
+                                    .id,
+                                items: snapshot.data
+                                    .map((wal) => DropdownMenuItem<int>(
+                                          value: wal.id,
+                                          child: Row(
+                                            children: <Widget>[
+                                              ColorBar(
+                                                color: wal.color,
+                                                fixedHeight: true,
+                                                height: 20,
+                                              ),
+                                              Text(
+                                                wal.name,
+                                                style: MENU_TEXT_STYLE,
+                                              ),
+                                            ],
+                                          ),
+                                        ))
+                                    .toList(),
+                                onChanged: (val) {
+                                  setState(() {
+                                    _selectedWalletId = val;
+                                  });
+                                },
+                              );
+                            }
+                            return new Container(
+                              alignment: AlignmentDirectional.center,
+                              child: new CircularProgressIndicator(),
+                            );
+                          })),
                 ],
               ),
               Container(
@@ -200,7 +213,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                 },
               ),
               InkWell(
-                onTap: () {}, //submitData(context, providerData),
+                onTap: () => submitData(context),
                 child: Card(
                   margin: const EdgeInsets.all(10),
                   color: CARDS_COLOR,

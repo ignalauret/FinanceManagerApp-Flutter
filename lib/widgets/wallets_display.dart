@@ -11,14 +11,21 @@ class WalletsDisplay extends StatelessWidget {
 
   WalletsDisplay(this.selectedIndex, this.selectWallet);
 
+  Future<Map> getWalletsWithBalances() async {
+    var wallets = await DBHelper().getWallets();
+    var balances = [];
+    for (Wallet wal in wallets) {
+      balances.add(await DBHelper().getBalanceOfWallet(wal.id));
+    }
+    return {"wallets": wallets, "balances": balances};
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: FutureBuilder<List<Wallet>>(
-            future: DBHelper().getWallets(),
+        child: FutureBuilder<Map>(
+            future: getWalletsWithBalances(),
             builder: (context, snapshot) {
-              print(snapshot.data);
-
               if (snapshot.data != null) {
                 if (snapshot.hasData) {
                   return GridView.builder(
@@ -29,16 +36,16 @@ class WalletsDisplay extends StatelessWidget {
                     itemBuilder: (ctx, index) {
                       return GestureDetector(
                         child: BalanceCard(
-                          title: snapshot.data[index].name,
-                          color: snapshot.data[index].color,
-                          balance: 35,
+                          title: snapshot.data["wallets"][index].name,
+                          color: snapshot.data["wallets"][index].color,
+                          balance: snapshot.data["balances"][index],
                           selected: index == selectedIndex,
                           fixedHeight: false,
                         ),
                         onTap: () => selectWallet(index),
                       );
                     },
-                    itemCount: snapshot.data.length,
+                    itemCount: snapshot.data["wallets"].length,
                   );
                 }
               }
@@ -48,29 +55,4 @@ class WalletsDisplay extends StatelessWidget {
               );
             }));
   }
-
-//  @override
-//  Widget build(BuildContext context) {
-//    final walletsData = Provider.of<TransactionsWalletsProvider>(context);
-//    return GridView.builder(
-//      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-//        crossAxisCount: 2,
-//        childAspectRatio: 4 / 2,
-//      ),
-//      itemBuilder: (ctx, index) {
-//        return GestureDetector(
-//          child: BalanceCard(
-//            title: walletsData.wallets[index].name,
-//            color: walletsData.wallets[index].color,
-//            balance:
-//                walletsData.getGlobalBalanceOf(walletsData.wallets[index].id),
-//            selected: index == selectedIndex,
-//            fixedHeight: false,
-//          ),
-//          onTap: () => selectWallet(index),
-//        );
-//      },
-//      itemCount: walletsData.wallets.length,
-//    );
-//  }
 }

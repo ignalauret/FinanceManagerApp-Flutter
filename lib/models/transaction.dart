@@ -62,7 +62,7 @@ class Transaction {
 
   // Los hago named para no tener que acordarme el orden
   Transaction({
-    @required this.id,
+    this.id,
     @required this.amount,
     @required this.date,
     @required this.note,

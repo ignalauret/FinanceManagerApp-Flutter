@@ -1,3 +1,4 @@
+import 'package:financemanager/Database/db_helper.dart';
 import 'package:flutter/material.dart';
 
 import '../widgets/cards/total_balance_card.dart';
@@ -13,25 +14,57 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        TotalBalanceCard("35"),
+        FutureBuilder(
+          future: DBHelper().getTotalBalance(),
+          builder: (context, snapshot) {
+            if (snapshot != null && snapshot.hasData) {
+              return TotalBalanceCard(snapshot.data);
+            }
+            return new Container(
+              alignment: AlignmentDirectional.center,
+              child: new CircularProgressIndicator(),
+            );
+          },
+        ),
         Row(
           children: <Widget>[
             Expanded(
-              child: BalanceCard(
-                title: "Ingresos",
-                color: INCOME_COLOR,
-                balance: 35,
+              child: FutureBuilder(
+                future: DBHelper().getTotalIncome(),
+                builder: (context, snapshot) {
+                  if (snapshot != null && snapshot.hasData) {
+                    return BalanceCard(
+                      title: "Ingresos",
+                      color: INCOME_COLOR,
+                      balance: snapshot.data,
+                    );
+                  }
+                  return new Container(
+                    alignment: AlignmentDirectional.center,
+                    child: new CircularProgressIndicator(),
+                  );
+                },
               ),
             ),
             Expanded(
-              child: BalanceCard(
-                title: "Gastos",
-                color: EXPENSE_COLOR,
-                balance: 35,
+              child: FutureBuilder(
+                future: DBHelper().getTotalExpense(),
+                builder: (context, snapshot) {
+                  if (snapshot != null && snapshot.hasData) {
+                    return BalanceCard(
+                      title: "Gastos",
+                      color: EXPENSE_COLOR,
+                      balance: snapshot.data,
+                    );
+                  }
+                  return new Container(
+                    alignment: AlignmentDirectional.center,
+                    child: new CircularProgressIndicator(),
+                  );
+                },
               ),
             ),
           ],

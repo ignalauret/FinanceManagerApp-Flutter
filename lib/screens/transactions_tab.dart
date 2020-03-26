@@ -1,32 +1,29 @@
 import 'package:financemanager/Database/db_helper.dart';
 import 'package:financemanager/models/transaction.dart';
-import 'package:financemanager/widgets/transactionsList/transactions_list_item.dart';
+import 'package:financemanager/utils/tools.dart';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 import '../widgets/cards/transactions_block_card.dart';
 
 class TransactionsScreen extends StatelessWidget {
-
   @override
   Widget build(BuildContext context) {
     return Column(
       children: <Widget>[
         Expanded(
-            child: FutureBuilder<List<Transaction>>(
-                future: DBHelper().getTransactions(),
+            child: FutureBuilder<Map<int, List<Transaction>>>(
+                future: DBHelper().getTransactionDayBlocks(),
                 builder: (context, snapshot) {
-                  print(snapshot.data);
-
+                  print("Snapshot data: $snapshot");
                   if (snapshot.data != null) {
                     if (snapshot.hasData) {
                       return ListView.builder(
                         itemBuilder: (ctx, index) {
-                          return TransactionListItem(
-                              snapshot.data[index], true);
+                          var date = intToDate(snapshot.data.keys.toList()[index]);
+                          var list = snapshot.data.values.toList()[index];
+                          return TransactionsBlockCard(date, list);
                         },
-                        itemCount: snapshot
-                            .data.length, //TODO: Saber hasta donde iterar
+                        itemCount: snapshot.data.length, //TODO: Saber hasta donde iterar
                       );
                     }
                   }
