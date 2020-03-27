@@ -18,7 +18,7 @@ class DBHelper {
 
   Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'finance_manager_db24.db');
+    String path = join(databasesPath, 'finance_manager_db25.db');
     var db = await openDatabase(path, version: 1, onCreate: onCreateFunc);
     return db;
   }
@@ -112,7 +112,7 @@ class DBHelper {
     List<int> dates = await getDates();
     dates = dates.toSet().toList();
     dates.sort((d1, d2) {
-      return d2-d1;
+      return d2 - d1;
     });
 
     List<MapEntry<int, List<tran.Transaction>>> entries = [];
@@ -154,6 +154,10 @@ class DBHelper {
     var dbConnection = await db;
     var sum = await dbConnection
         .rawQuery('SELECT SUM(amount) AS result FROM tran WHERE isexpense = 0');
+    print("Income sum: $sum");
+
+    if (sum[0]["result"] == null)
+      return 0;
     return sum[0]['result'];
   }
 
@@ -162,6 +166,9 @@ class DBHelper {
     var dbConnection = await db;
     var sum = await dbConnection
         .rawQuery('SELECT SUM(amount) AS result FROM tran WHERE isexpense = 1');
+    print("Expense sum: $sum");
+    if (sum[0]["result"] == null)
+      return 0;
     return sum[0]['result'];
   }
 
@@ -171,9 +178,10 @@ class DBHelper {
     var startingBalances = await dbConnection
         .rawQuery("SELECT SUM(startingbalance) AS result FROM wallet");
 
-    return (await getTotalIncome()) -
-        (await getTotalExpense()) +
-        startingBalances[0]["result"];
+    var totalIncome = await getTotalIncome();
+    var totalExpense = await getTotalExpense();
+    print("Income: $totalIncome , Expense: $totalExpense");
+    return totalIncome - totalExpense + startingBalances[0]["result"];
   }
 
   Future<double> getBalanceOfWallet(int walletId) async {

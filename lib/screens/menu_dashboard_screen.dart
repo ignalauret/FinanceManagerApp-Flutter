@@ -1,7 +1,7 @@
 import 'package:financemanager/screens/calculator_screen.dart';
 import 'package:financemanager/screens/settings_screen.dart';
 import 'package:financemanager/screens/shoping_screen.dart';
-import 'package:financemanager/screens/support_screen.dart';
+import 'package:financemanager/screens/finances_screen.dart';
 import 'package:financemanager/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'main_tabs_screen.dart';
@@ -45,10 +45,10 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
     super.initState();
     _screens = [
       MainTabsScreen(buildMenuButton),
-      ShoppingScreen(buildMenuButton),
+      FinancesScreen(buildMenuButton),
       CalculatorScreen(buildMenuButton),
+      ShoppingScreen(buildMenuButton),
       SettingsScreen(buildMenuButton),
-      SupportScreen(buildMenuButton),
     ];
     _controller = AnimationController(vsync: this, duration: duration);
     _scaleAnimation = Tween<double>(begin: 1, end: 0.8).animate(_controller);
@@ -107,7 +107,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                       },
                       child: FittedBox(
                         fit: BoxFit.contain,
-                        child: Text("Mis Finanzas",
+                        child: Text("Billetera",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 22)),
                       ),
@@ -123,7 +123,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                       },
                       child: FittedBox(
                         fit: BoxFit.contain,
-                        child: Text("Lista de Compras",
+                        child: Text("Finanzas",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 22)),
                       ),
@@ -155,7 +155,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                       },
                       child: FittedBox(
                         fit: BoxFit.contain,
-                        child: Text("Configuración",
+                        child: Text("Lista de compras",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 22)),
                       ),
@@ -171,7 +171,7 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
                       },
                       child: FittedBox(
                         fit: BoxFit.contain,
-                        child: Text("Soporte",
+                        child: Text("Configuracion",
                             style:
                                 TextStyle(color: Colors.white, fontSize: 22)),
                       ),
@@ -194,12 +194,18 @@ class _MenuDashboardPageState extends State<MenuDashboardPage>
       right: isCollapsed ? 0 : -0.5 * screenWidth,
       child: ScaleTransition(
         scale: _scaleAnimation,
-        child: Material(
-          animationDuration: duration,
-          borderRadius: BorderRadius.all(Radius.circular(40)),
-          elevation: 12,
-          color: CARDS_COLOR,
-          child: _screens[_selectedScreenIndex],
+        child: GestureDetector(
+          onTap: () => setState(() {
+            _controller.reverse();
+            isCollapsed = true;
+          }),
+          child: Material(
+            animationDuration: duration,
+            borderRadius: BorderRadius.all(Radius.circular(40)),
+            elevation: 12,
+            color: CARDS_COLOR,
+            child: _screens[_selectedScreenIndex],
+          ),
         ),
       ),
     );

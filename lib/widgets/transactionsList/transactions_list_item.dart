@@ -1,3 +1,4 @@
+import 'package:financemanager/Database/db_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -11,80 +12,97 @@ class TransactionListItem extends StatelessWidget {
 
   TransactionListItem(this.transaction, this.withDate);
 
+  void deleteTransaction() {
+    DBHelper().deleteTransaction(transaction.id);
+  }
+
+  void editTransaction() {
+    print("edit");
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      color: CARDS_COLOR,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(CARDS_BORDER_RADIUS),
-      ),
-      margin: EdgeInsets.symmetric(
-        vertical: 7,
-        horizontal: 10,
-      ),
-      elevation: CARDS_ELEVATION,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: <Widget>[
-          Container(
-            child: Row(
-              children: <Widget>[
-                ColorBar(
-                  color: TransactionCategoryColor[transaction.category],
-                  height: 30,
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Text(
-                  transaction.note,
-                  style: TextStyle(
-                    color: TEXT_COLOR,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
+    return Dismissible(
+      key: Key(transaction.id.toString()),
+      onDismissed: (direction) {
+        if (direction == DismissDirection.endToStart)
+          deleteTransaction();
+        else
+          editTransaction();
+      },
+      child: Card(
+        color: CARDS_COLOR,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(CARDS_BORDER_RADIUS),
+        ),
+        margin: EdgeInsets.symmetric(
+          vertical: 7,
+          horizontal: 10,
+        ),
+        elevation: CARDS_ELEVATION,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Container(
+              child: Row(
+                children: <Widget>[
+                  ColorBar(
+                    color: TransactionCategoryColor[transaction.category],
+                    height: 30,
                   ),
-                ),
-              ],
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.only(right: 12),
-            child: Row(
-              children: <Widget>[
-                FittedBox(
-                  child: transaction.isExpense
-                      ? Text(
-                          "-\$${transaction.amount.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            color: EXPENSE_COLOR,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        )
-                      : Text(
-                          "+\$${transaction.amount.toStringAsFixed(2)}",
-                          style: TextStyle(
-                            color: INCOME_COLOR,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                ),
-                if (withDate)
-                  Container(
-                    margin: EdgeInsets.only(
-                      left: 10,
+                  SizedBox(
+                    width: 10,
+                  ),
+                  Text(
+                    transaction.note,
+                    style: TextStyle(
+                      color: TEXT_COLOR,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
-                    child: Text(
-                      DateFormat("d MMM").format(transaction.date),
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 12,
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              margin: EdgeInsets.only(right: 12),
+              child: Row(
+                children: <Widget>[
+                  FittedBox(
+                    child: transaction.isExpense
+                        ? Text(
+                            "-\$${transaction.amount.toStringAsFixed(2)}",
+                            style: TextStyle(
+                              color: EXPENSE_COLOR,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          )
+                        : Text(
+                            "+\$${transaction.amount.toStringAsFixed(2)}",
+                            style: TextStyle(
+                              color: INCOME_COLOR,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                  ),
+                  if (withDate)
+                    Container(
+                      margin: EdgeInsets.only(
+                        left: 10,
+                      ),
+                      child: Text(
+                        DateFormat("d MMM").format(transaction.date),
+                        style: TextStyle(
+                          color: Colors.grey,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
-                  ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

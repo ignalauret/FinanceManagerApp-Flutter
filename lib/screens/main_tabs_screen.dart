@@ -88,7 +88,11 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         context: ctx,
         builder: (_) {
           return NewWalletSheet();
-        });
+        }).then((_) {
+      setState(() {
+        _tabIndex = 3;
+      });
+    });
   }
 
   /* ****** Build Methods ***** */

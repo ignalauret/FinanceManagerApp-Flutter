@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 class TransactionsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-
     return FutureBuilder(
         future: DBHelper().getRecentTransactions(),
         builder: (context, snapshot) {
@@ -15,27 +14,14 @@ class TransactionsList extends StatelessWidget {
             if (snapshot.hasData) {
               return Container(
                 child: (snapshot.data.isEmpty)
-                    ? LayoutBuilder(builder: (ctx, constraints) {
-                        return Column(
-                          children: <Widget>[
-                            Text(
-                              "No recent transactions",
-                            ),
-                          ],
-                        );
-                      })
+                    ? Text(
+                        "No recent transactions",
+                      )
                     : ListView.builder(
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
-                          return Dismissible(
-                            key: Key(snapshot.data[index].id.toString()),
-                            onDismissed: (direction) {
-                              DBHelper()
-                                  .deleteTransaction(snapshot.data[index].id);
-                            },
-                            child:
-                                TransactionListItem(snapshot.data[index], true),
-                          );
+                          return TransactionListItem(
+                              snapshot.data[index], true);
                         },
                       ),
               );

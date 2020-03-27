@@ -19,7 +19,6 @@ environment:
 dependencies:
   intl: ^0.16.1
   curved_navigation_bar: ^0.3.2
-  provider:
   sqflite:
   path:
   flutter:

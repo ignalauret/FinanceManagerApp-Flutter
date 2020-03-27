@@ -1,10 +1,10 @@
 import 'package:financemanager/utils/constants.dart';
 import 'package:flutter/material.dart';
 
-class SupportScreen extends StatelessWidget {
+class FinancesScreen extends StatelessWidget {
   final Function buildMenuButton;
 
-  SupportScreen(this.buildMenuButton);
+  FinancesScreen(this.buildMenuButton);
 
   @override
   Widget build(BuildContext context) {
@@ -12,7 +12,7 @@ class SupportScreen extends StatelessWidget {
       backgroundColor: BACKGROUND_COLOR,
       appBar: AppBar(
         title: Text(
-          "Soporte",
+          "Finanzas",
           style: TextStyle(
             color: Colors.grey,
           ),
@@ -23,7 +23,7 @@ class SupportScreen extends StatelessWidget {
       ),
       body: Center(
         child: Text(
-          "Contacto a Soporte",
+          "Mis finanzas",
           style: TextStyle(
             color: TEXT_COLOR,
           ),

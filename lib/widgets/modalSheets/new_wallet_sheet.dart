@@ -1,3 +1,7 @@
+import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/models/wallet.dart';
+import 'package:financemanager/widgets/userInput/dropdown_input.dart';
+
 import '../../utils/constants.dart';
 import '../calculator/calculator_dialog.dart';
 import '../userInput/detail_input_button.dart';
@@ -12,19 +16,23 @@ class NewWalletSheet extends StatefulWidget {
 class _NewWalletSheetState extends State<NewWalletSheet> {
   String _calculatorInput = "0";
   String _selectedNote = "";
+  Color _selectedColor = CATEGORY_TRANSPORTATION_COLOR;
 
-//  void submitData(BuildContext ctx) {
-//    final enteredNote = _selectedNote;
-//    final enteredAmount = double.parse(_calculatorInput);
-//    if (enteredNote.isEmpty) return;
-//
-//    Provider.of<TransactionsWalletsProvider>(context, listen: false).addWallet(
-//      name: _selectedNote,
-//      initialBalance: enteredAmount,
-//    );
-//
-//    Navigator.of(context).pop();
-//  }
+  void submitData(BuildContext ctx) {
+    final enteredNote = _selectedNote;
+    final enteredAmount = double.parse(_calculatorInput);
+    if (enteredNote.isEmpty) return;
+
+    DBHelper().addNewWallet(
+      Wallet(
+        name: _selectedNote,
+        startingBalance: enteredAmount,
+        color: _selectedColor,
+      ),
+    );
+
+    Navigator.of(context).pop();
+  }
 
   void _submitCalculatorDialog(String value) {
     setState(() {
@@ -43,6 +51,12 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
   void _newNote(String note) {
     setState(() {
       _selectedNote = note;
+    });
+  }
+
+  void _pickColor(Color color) {
+    setState(() {
+      _selectedColor = color;
     });
   }
 
@@ -81,16 +95,9 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
                   _showCalculatorDialog(context);
                 },
               ),
-              DetailInputButton(
-                label: "Color:",
-                color: Colors.grey,
-                value: "Color",
-                onPressedFun: () {
-                  // Show color picker
-                },
-              ),
+              ColorPickerInput(_pickColor, _selectedColor),
               InkWell(
-                onTap: () => {}, //submitData(context),
+                onTap: () => submitData(context),
                 child: Card(
                   margin: const EdgeInsets.all(10),
                   color: CARDS_COLOR,

@@ -23,7 +23,7 @@ class TransactionsScreen extends StatelessWidget {
                           var list = snapshot.data.values.toList()[index];
                           return TransactionsBlockCard(date, list);
                         },
-                        itemCount: snapshot.data.length, //TODO: Saber hasta donde iterar
+                        itemCount: snapshot.data.length,
                       );
                     }
                   }
