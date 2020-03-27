@@ -64,10 +64,10 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
           : incomeCategories[_selectedCategoryIndex],
     );
     if (widget.editMode) {
-      DBHelper().editTransaction(transaction);
+      DBHelper().editTransaction(transaction).then((_) => Navigator.of(context).pop());
     } else
-      DBHelper().addNewTransaction(transaction);
-    Navigator.of(context).pop();
+      DBHelper().addNewTransaction(transaction).then((_) => Navigator.of(context).pop());
+
   }
 
   void _presentDatePicker() {

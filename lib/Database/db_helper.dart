@@ -71,7 +71,7 @@ class DBHelper {
   }
 
   // add new person
-  void addNewWallet(Wallet wallet) async {
+  Future<void> addNewWallet(Wallet wallet) async {
     var dbConnection = await db;
     int color = COLOR_PALETTE.indexOf(wallet.color);
     String query = """
@@ -82,7 +82,7 @@ class DBHelper {
     });
   }
 
-  void addNewTransaction(t.Transaction tran) async {
+  Future<void> addNewTransaction(t.Transaction tran) async {
     var dbConnection = await db;
     String query = """
         INSERT INTO tran(note, amount, category, walletid, isexpense, date) VALUES('${tran.note}','${tran.amount}','${t.TransactionCategoryList.indexOf(tran.category)}','${tran.walletId}','${tran.isExpense ? 1 : 0}','${dateToInt(tran.date)}')
@@ -92,11 +92,8 @@ class DBHelper {
     });
   }
 
-  void editTransaction(t.Transaction tran) async {
+  Future<void> editTransaction(t.Transaction tran) async {
     var dbConnection = await db;
-    print(await dbConnection.query("tran"));
-    print(tran.id);
-    print(tran.note);
     dbConnection.update(
       "tran",
       {
@@ -109,8 +106,19 @@ class DBHelper {
       },
       where: "tid = ${tran.id}",
     );
-    print(await dbConnection.query("tran"));
   }
+
+  Future<void> editWallet(Wallet wal) async {
+    var dbConnection = await db;
+    dbConnection.update(
+      "wallet",
+      {
+        "name": wal.name,
+        "startingbalance": wal.startingBalance,
+        "color": COLOR_PALETTE.indexOf(wal.color),
+      },
+      where: "wid = ${wal.id}",
+    );}
 
   /* ********* Queries *********** */
 

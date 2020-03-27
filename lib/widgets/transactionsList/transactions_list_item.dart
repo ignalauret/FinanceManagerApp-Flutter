@@ -125,6 +125,7 @@ class TransactionListItem extends StatelessWidget {
                             style: TextStyle(
                               color: EXPENSE_COLOR,
                               fontWeight: FontWeight.bold,
+                              fontFamily: "Baloo",
                             ),
                           )
                         : Text(
@@ -132,6 +133,7 @@ class TransactionListItem extends StatelessWidget {
                             style: TextStyle(
                               color: INCOME_COLOR,
                               fontWeight: FontWeight.bold,
+                              fontFamily: "Baloo",
                             ),
                           ),
                   ),
@@ -145,6 +147,7 @@ class TransactionListItem extends StatelessWidget {
                         style: TextStyle(
                           color: Colors.grey,
                           fontSize: 12,
+                          fontFamily: "Baloo",
                         ),
                       ),
                     ),

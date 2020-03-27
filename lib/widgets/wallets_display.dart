@@ -1,5 +1,6 @@
 import 'package:financemanager/Database/db_helper.dart';
 import 'package:financemanager/models/wallet.dart';
+import 'package:financemanager/widgets/modalSheets/new_wallet_sheet.dart';
 
 import 'package:flutter/material.dart';
 
@@ -8,8 +9,9 @@ import 'cards/balance_card.dart';
 class WalletsDisplay extends StatelessWidget {
   final int selectedIndex;
   final Function selectWallet;
+  final Function rebuild;
 
-  WalletsDisplay(this.selectedIndex, this.selectWallet);
+  WalletsDisplay(this.selectedIndex, this.selectWallet, this.rebuild);
 
   Future<Map> getWalletsWithBalances() async {
     var wallets = await DBHelper().getWallets();
@@ -18,6 +20,16 @@ class WalletsDisplay extends StatelessWidget {
       balances.add(await DBHelper().getBalanceOfWallet(wal.id));
     }
     return {"wallets": wallets, "balances": balances};
+  }
+
+  void startEditWallet(Wallet wallet, BuildContext ctx) {
+
+      showModalBottomSheet(
+        context: ctx,
+        builder: (_) {
+          return NewWalletSheet.edit(wallet);
+        },
+      ).then((_) => rebuild());
   }
 
   @override
@@ -43,6 +55,7 @@ class WalletsDisplay extends StatelessWidget {
                           fixedHeight: false,
                         ),
                         onTap: () => selectWallet(index),
+                        onLongPress: () => startEditWallet(snapshot.data["wallets"][index], context),
                       );
                     },
                     itemCount: snapshot.data["wallets"].length,

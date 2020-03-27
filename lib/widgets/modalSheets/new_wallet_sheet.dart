@@ -9,6 +9,13 @@ import '../userInput/text_input.dart';
 import 'package:flutter/material.dart';
 
 class NewWalletSheet extends StatefulWidget {
+  final Wallet _walletToEdit;
+  final bool editMode;
+
+  NewWalletSheet()
+      : _walletToEdit = null,
+        editMode = false;
+  NewWalletSheet.edit(this._walletToEdit) : editMode = true;
   @override
   _NewWalletSheetState createState() => _NewWalletSheetState();
 }
@@ -17,21 +24,30 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
   String _calculatorInput = "0";
   String _selectedNote = "";
   Color _selectedColor = CATEGORY_TRANSPORTATION_COLOR;
+  bool editModeSetted = false;
+
+  void setEditMode() {
+    _calculatorInput = widget._walletToEdit.startingBalance.toStringAsFixed(2);
+    _selectedNote = widget._walletToEdit.name;
+    _selectedColor = widget._walletToEdit.color;
+    editModeSetted = true;
+  }
 
   void submitData(BuildContext ctx) {
     final enteredNote = _selectedNote;
     final enteredAmount = double.parse(_calculatorInput);
     if (enteredNote.isEmpty) return;
 
-    DBHelper().addNewWallet(
-      Wallet(
-        name: _selectedNote,
-        startingBalance: enteredAmount,
-        color: _selectedColor,
-      ),
+    Wallet wallet = Wallet(
+      id: widget.editMode ? widget._walletToEdit.id : null,
+      name: _selectedNote,
+      startingBalance: enteredAmount,
+      color: _selectedColor,
     );
-
-    Navigator.of(context).pop();
+    if (widget.editMode)
+      DBHelper().editWallet(wallet).then((_) => Navigator.of(context).pop());
+    else
+      DBHelper().addNewWallet(wallet).then((_) => Navigator.of(context).pop());
   }
 
   void _submitCalculatorDialog(String value) {
@@ -62,6 +78,8 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
 
   @override
   Widget build(BuildContext context) {
+    if (!editModeSetted && widget.editMode) setEditMode();
+
     return SingleChildScrollView(
       child: Card(
         color: BACKGROUND_COLOR,

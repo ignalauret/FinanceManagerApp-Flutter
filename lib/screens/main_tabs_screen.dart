@@ -203,7 +203,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
       HomeScreen(),
       TransactionsScreen(rebuild),
       HomeScreen(),
-      WalletsScreen(),
+      WalletsScreen(rebuild),
     ];
 
 
