@@ -211,7 +211,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                 "Ingrese los detalles",
                 style: TITLE_STYLE,
               ),
-              NoteInput(_newNote, "Nota:"),
+              TextInput(_newNote, "Nota:", _selectedNote),
               widget.isExpense
                   ? DetailInputButton(
                       label: "Precio:",

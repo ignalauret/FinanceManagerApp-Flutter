@@ -7,13 +7,14 @@ import 'package:intl/intl.dart';
 class TransactionsBlockCard extends StatelessWidget {
   final DateTime date;
   final List<Transaction> transactions;
+  final Function rebuild;
 
-  TransactionsBlockCard(this.date, this.transactions);
+  TransactionsBlockCard(this.date, this.transactions, this.rebuild);
 
   List<Widget> _buildExpenses() {
     List<Widget> list = [];
     for (int i = 0; i < transactions.length; i++) {
-      list.add(TransactionListItem(transactions[i], false));
+      list.add(TransactionListItem(transactions[i], false, rebuild));
     }
     return list;
   }

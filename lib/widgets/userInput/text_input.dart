@@ -3,10 +3,30 @@ import 'package:flutter/material.dart';
 
 import '../color_bar.dart';
 
-class NoteInput extends StatelessWidget {
+class TextInput extends StatefulWidget {
   final Function changeTitle;
   final String hint;
-  NoteInput(this.changeTitle, this.hint);
+  final String value;
+  TextInput(this.changeTitle, this.hint, this.value);
+
+  @override
+  _TextInputState createState() => _TextInputState();
+}
+
+class _TextInputState extends State<TextInput> {
+  TextEditingController controller;
+
+  @override
+  void dispose() {
+    controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    controller = TextEditingController(text: widget.value);
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -42,9 +62,11 @@ class NoteInput extends StatelessWidget {
                   Container(
                     width: 300,
                     child: TextField(
-                      onChanged: (newVal) {
-                        changeTitle(newVal);
+                      onSubmitted: (val) {
+                        print("submitted: ${controller.text}");
+                        widget.changeTitle(val);
                       },
+                      controller: controller,
                       textAlignVertical: TextAlignVertical.top,
                       style: TextStyle(
                         color: Colors.white,
@@ -52,7 +74,7 @@ class NoteInput extends StatelessWidget {
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.all(0),
                         border: InputBorder.none,
-                        hintText: hint,
+                        hintText: widget.hint,
                         hintStyle: TextStyle(
                           color: TEXT_COLOR,
                           fontWeight: FontWeight.bold,

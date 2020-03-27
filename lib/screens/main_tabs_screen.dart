@@ -67,9 +67,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         builder: (_) {
           return NewTransactionSheet(true);
         }).then((_) {
-      setState(() {
-        _tabIndex = _tabIndex * 1;
-      });
+      rebuild();
     });
   }
 
@@ -79,9 +77,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         builder: (_) {
           return NewTransactionSheet(false);
         }).then((_) {
-      setState(() {
-        _tabIndex = _tabIndex * 1;
-      });
+
     });
   }
 
@@ -91,13 +87,17 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         builder: (_) {
           return NewWalletSheet();
         }).then((_) {
-      setState(() {
-        _tabIndex = _tabIndex * 1;
-      });
+      rebuild();
     });
   }
 
   /* ****** Build Methods ***** */
+  void rebuild() {
+    setState(() {
+      _tabIndex = _tabIndex * 1;
+    });
+  }
+
   Widget _buildAppBarTitle() {
     switch (_tabIndex) {
       case 0:
@@ -201,7 +201,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   Widget build(BuildContext context) {
     final tabs = [
       HomeScreen(),
-      TransactionsScreen(),
+      TransactionsScreen(rebuild),
       HomeScreen(),
       WalletsScreen(),
     ];

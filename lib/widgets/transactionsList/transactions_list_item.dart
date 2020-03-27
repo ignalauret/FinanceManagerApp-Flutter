@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:financemanager/Database/db_helper.dart';
 import 'package:financemanager/widgets/modalSheets/new_transaction_sheet.dart';
 import 'package:flutter/material.dart';
@@ -11,8 +13,9 @@ import '../color_bar.dart';
 class TransactionListItem extends StatelessWidget {
   final Transaction transaction;
   final bool withDate;
+  final Function rebuild;
 
-  TransactionListItem(this.transaction, this.withDate);
+  TransactionListItem(this.transaction, this.withDate, this.rebuild);
 
   void deleteTransaction() {
     DBHelper().deleteTransaction(transaction.id);
@@ -24,13 +27,13 @@ class TransactionListItem extends StatelessWidget {
       builder: (_) {
         return NewTransactionSheet.edit(transaction);
       },
-    );
+    ).then((_) => rebuild());
   }
 
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(transaction.id.toString()),
+      key: Key(Random().nextInt(10000).toString()),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart)
           deleteTransaction();

@@ -20,7 +20,7 @@ class TransactionsList extends StatelessWidget {
                         itemCount: snapshot.data.length,
                         itemBuilder: (context, index) {
                           return TransactionListItem(
-                              snapshot.data[index], true);
+                              snapshot.data[index], true, null);
                         },
                       ),
               );

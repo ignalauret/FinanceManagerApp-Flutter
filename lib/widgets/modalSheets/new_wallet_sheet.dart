@@ -86,7 +86,7 @@ class _NewWalletSheetState extends State<NewWalletSheet> {
                 "Ingrese los detalles",
                 style: TITLE_STYLE,
               ),
-              NoteInput(_newNote, "Nombre:"),
+              TextInput(_newNote, "Nombre:", _selectedNote),
               DetailInputButton(
                 label: "Saldo Inicial:",
                 color: INCOME_COLOR,

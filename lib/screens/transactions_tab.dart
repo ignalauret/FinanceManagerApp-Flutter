@@ -6,6 +6,9 @@ import 'package:flutter/material.dart';
 import '../widgets/cards/transactions_block_card.dart';
 
 class TransactionsScreen extends StatelessWidget {
+  final Function rebuild;
+  TransactionsScreen(this.rebuild);
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -20,7 +23,7 @@ class TransactionsScreen extends StatelessWidget {
                         itemBuilder: (ctx, index) {
                           var date = intToDate(snapshot.data.keys.toList()[index]);
                           var list = snapshot.data.values.toList()[index];
-                          return TransactionsBlockCard(date, list);
+                          return TransactionsBlockCard(date, list, rebuild);
                         },
                         itemCount: snapshot.data.length,
                       );
