@@ -18,7 +18,7 @@ class DBHelper {
 
   Future<Database> initDB() async {
     var databasesPath = await getDatabasesPath();
-    String path = join(databasesPath, 'finance_manager_db25.db');
+    String path = join(databasesPath, 'financemanagerdatabase1.db');
     var db = await openDatabase(path, version: 1, onCreate: onCreateFunc);
     return db;
   }

@@ -1,4 +1,6 @@
 import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/utils/constants.dart';
+import 'package:flutter/rendering.dart';
 
 import 'transactions_list_item.dart';
 import 'package:flutter/material.dart';
@@ -13,8 +15,15 @@ class TransactionsList extends StatelessWidget {
             if (snapshot.hasData) {
               return Container(
                 child: (snapshot.data.isEmpty)
-                    ? Text(
-                        "No recent transactions",
+                    ? Center(
+                        child: Text(
+                          "No hay transacctiones recientes. Agrega una con el botón +.",
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            color: TEXT_COLOR,
+                            fontSize: 25,
+                          ),
+                        ),
                       )
                     : ListView.builder(
                         itemCount: snapshot.data.length,

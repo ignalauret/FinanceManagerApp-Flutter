@@ -56,7 +56,7 @@ const keyMap = [
     color: Colors.white,
   ),
   Icon(
-    Icons.subdirectory_arrow_right,
+    Icons.check,
     color: Colors.white,
   ),
 ];
@@ -81,7 +81,7 @@ class CalculatorKey extends StatelessWidget {
         height: symbol > 10 ? size * 2 : size,
         child: RaisedButton(
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-          color: color,
+          color: symbol == 12 ? INCOME_COLOR : color,
           elevation: 4,
           child: keyMap[symbol],
           onPressed: () => buttonTap(symbol.toString()),

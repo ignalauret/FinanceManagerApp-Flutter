@@ -23,42 +23,6 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
   int _tabIndex = 0;
 
   /* ******* DB managmenet ******** */
-  @override
-  void initState() {
-    super.initState();
-    //loadDB();
-  }
-
-  void loadDB() async {
-    final dbHelper = DBHelper();
-    final wallet = Wallet(
-        name: "TestDB",
-        color: CATEGORY_TRANSPORTATION_COLOR,
-        startingBalance: 50);
-    final wallet1 = Wallet(name: "TestDB1", color: CATEGORY_SALARY_COLOR);
-    final wallet2 = Wallet(name: "TestDB2", color: CATEGORY_MEDICAL_COLOR);
-    dbHelper.addNewWallet(wallet);
-    dbHelper.addNewWallet(wallet1);
-    dbHelper.addNewWallet(wallet2);
-    final tran1 = Transaction(
-        id: 3,
-        amount: 45.20,
-        date: DateTime.now().subtract(Duration(days: 10)),
-        note: "Test DB",
-        category: TransactionCategories.Transporte,
-        walletId: 1,
-        isExpense: false);
-    final tran2 = Transaction(
-        id: 2,
-        amount: 245.20,
-        date: DateTime.now(),
-        note: "Test DB2",
-        category: TransactionCategories.Salario,
-        walletId: 2,
-        isExpense: true);
-    dbHelper.addNewTransaction(tran1);
-    dbHelper.addNewTransaction(tran2);
-  }
 
   /* ***** Events ******** */
   void startAddNewExpense(BuildContext ctx) {
@@ -76,9 +40,7 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         context: ctx,
         builder: (_) {
           return NewTransactionSheet(false);
-        }).then((_) {
-
-    });
+        }).then((_) {});
   }
 
   void startAddNewWallet(BuildContext ctx) {
@@ -132,7 +94,15 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
     return null;
   }
 
+  void loadDB() async {
+    final wallets = await DBHelper().getWallets();
+    if (wallets.length == 0)
+      DBHelper().addNewWallet(
+          Wallet(name: "Billetera", color: CATEGORY_TRANSPORTATION_COLOR)).then((_) => rebuild());
+  }
+
   Widget _buildAppBar(BuildContext context) {
+    loadDB();
     return AppBar(
       title: _buildAppBarTitle(),
       backgroundColor: BACKGROUND_COLOR,
@@ -206,49 +176,47 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
       WalletsScreen(rebuild),
     ];
 
-
-
     return Scaffold(
-            backgroundColor: BACKGROUND_COLOR,
-            appBar: _buildAppBar(context),
-            body: Container(
-              margin: EdgeInsets.only(bottom: 0),
-              child: tabs[_tabIndex],
-            ),
-            bottomNavigationBar: CurvedNavigationBar(
-              backgroundColor: BACKGROUND_COLOR,
-              animationDuration: Duration(milliseconds: 200),
-              color: CARDS_COLOR,
-              index: _tabIndex,
-              height: 50,
-              items: <Widget>[
-                Icon(
-                  Icons.home,
-                  size: 25,
-                  color: Colors.white,
-                ),
-                Icon(
-                  Icons.compare_arrows,
-                  size: 25,
-                  color: Colors.white,
-                ),
-                Icon(
-                  Icons.list,
-                  size: 25,
-                  color: Colors.white,
-                ),
-                Icon(
-                  Icons.account_balance_wallet,
-                  size: 25,
-                  color: Colors.white,
-                ),
-              ],
-              onTap: (index) {
-                setState(() {
-                  _tabIndex = index;
-                });
-              },
-            ),
-          );
+      backgroundColor: BACKGROUND_COLOR,
+      appBar: _buildAppBar(context),
+      body: Container(
+        margin: EdgeInsets.only(bottom: 0),
+        child: tabs[_tabIndex],
+      ),
+      bottomNavigationBar: CurvedNavigationBar(
+        backgroundColor: BACKGROUND_COLOR,
+        animationDuration: Duration(milliseconds: 200),
+        color: CARDS_COLOR,
+        index: _tabIndex,
+        height: 50,
+        items: <Widget>[
+          Icon(
+            Icons.home,
+            size: 25,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.compare_arrows,
+            size: 25,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.list,
+            size: 25,
+            color: Colors.white,
+          ),
+          Icon(
+            Icons.account_balance_wallet,
+            size: 25,
+            color: Colors.white,
+          ),
+        ],
+        onTap: (index) {
+          setState(() {
+            _tabIndex = index;
+          });
+        },
+      ),
+    );
   }
 }
