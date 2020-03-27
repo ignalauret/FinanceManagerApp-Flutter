@@ -9,7 +9,6 @@ class TransactionsList extends StatelessWidget {
     return FutureBuilder(
         future: DBHelper().getRecentTransactions(),
         builder: (context, snapshot) {
-          print(snapshot.data);
           if (snapshot.data != null) {
             if (snapshot.hasData) {
               return Container(

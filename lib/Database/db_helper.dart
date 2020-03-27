@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:financemanager/models/transaction.dart' as tran;
+import 'package:financemanager/models/transaction.dart' as t;
 import 'package:financemanager/models/wallet.dart';
 import 'package:financemanager/utils/constants.dart';
 import 'package:financemanager/utils/tools.dart';
@@ -49,12 +49,12 @@ class DBHelper {
   }
 
   // Get all Transactions
-  Future<List<tran.Transaction>> getTransactions() async {
+  Future<List<t.Transaction>> getTransactions() async {
     var dbConnection = await db;
     List<Map> list = await dbConnection.rawQuery('SELECT * FROM tran');
-    List<tran.Transaction> transactions = new List();
+    List<t.Transaction> transactions = new List();
     for (int i = 0; i < list.length; i++) {
-      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      t.Transaction transaction = t.Transaction.fromJson(list[i]);
       transactions.add(transaction);
     }
     return transactions;
@@ -82,32 +82,52 @@ class DBHelper {
     });
   }
 
-  void addNewTransaction(tran.Transaction trans) async {
+  void addNewTransaction(t.Transaction tran) async {
     var dbConnection = await db;
     String query = """
-        INSERT INTO tran(note, amount, category, walletid, isexpense, date) VALUES('${trans.note}','${trans.amount}','${tran.TransactionCategoryList.indexOf(trans.category)}','${trans.walletId}','${trans.isExpense ? 1 : 0}','${dateToInt(trans.date)}')
+        INSERT INTO tran(note, amount, category, walletid, isexpense, date) VALUES('${tran.note}','${tran.amount}','${t.TransactionCategoryList.indexOf(tran.category)}','${tran.walletId}','${tran.isExpense ? 1 : 0}','${dateToInt(tran.date)}')
         """;
     await dbConnection.transaction((transaction) async {
       return await transaction.rawInsert(query);
     });
   }
 
+  void editTransaction(t.Transaction tran) async {
+    var dbConnection = await db;
+    print(await dbConnection.query("tran"));
+    print(tran.id);
+    print(tran.note);
+    dbConnection.update(
+      "tran",
+      {
+        "note": tran.note,
+        "amount": tran.amount,
+        "category": t.TransactionCategoryList.indexOf(tran.category),
+        "walletid": tran.walletId,
+        "isexpense": tran.isExpense ? 1 : 0,
+        "date": dateToInt(tran.date)
+      },
+      where: "tid = ${tran.id}",
+    );
+    print(await dbConnection.query("tran"));
+  }
+
   /* ********* Queries *********** */
 
 // Get transactions from last week
-  Future<List<tran.Transaction>> getRecentTransactions() async {
+  Future<List<t.Transaction>> getRecentTransactions() async {
     var dbConnection = await db;
     final date = dateToInt(DateTime.now().subtract(Duration(days: 7)));
     List<Map> list = await dbConnection.query('tran', where: 'date > $date');
-    List<tran.Transaction> transactions = new List();
+    List<t.Transaction> transactions = new List();
     for (int i = 0; i < list.length; i++) {
-      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      t.Transaction transaction = t.Transaction.fromJson(list[i]);
       transactions.add(transaction);
     }
     return transactions;
   }
 
-  Future<Map<int, List<tran.Transaction>>> getTransactionDayBlocks() async {
+  Future<Map<int, List<t.Transaction>>> getTransactionDayBlocks() async {
     // Get dates and make diff and sort them.
     List<int> dates = await getDates();
     dates = dates.toSet().toList();
@@ -115,14 +135,12 @@ class DBHelper {
       return d2 - d1;
     });
 
-    List<MapEntry<int, List<tran.Transaction>>> entries = [];
+    List<MapEntry<int, List<t.Transaction>>> entries = [];
     for (int date in dates) {
       var entry = MapEntry(date, await getTransactionsOfDate(date));
       entries.add(entry);
     }
-    print("Entries: $entries");
-
-    Map<int, List<tran.Transaction>> result = {};
+    Map<int, List<t.Transaction>> result = {};
     result.addEntries(entries);
     return result;
   }
@@ -138,12 +156,12 @@ class DBHelper {
     return dates;
   }
 
-  Future<List<tran.Transaction>> getTransactionsOfDate(int date) async {
+  Future<List<t.Transaction>> getTransactionsOfDate(int date) async {
     var dbConnection = await db;
     List<Map> list = await dbConnection.query('tran', where: 'date = $date');
-    List<tran.Transaction> transactions = new List();
+    List<t.Transaction> transactions = new List();
     for (int i = 0; i < list.length; i++) {
-      tran.Transaction transaction = tran.Transaction.fromJson(list[i]);
+      t.Transaction transaction = t.Transaction.fromJson(list[i]);
       transactions.add(transaction);
     }
     return transactions;
@@ -154,10 +172,8 @@ class DBHelper {
     var dbConnection = await db;
     var sum = await dbConnection
         .rawQuery('SELECT SUM(amount) AS result FROM tran WHERE isexpense = 0');
-    print("Income sum: $sum");
 
-    if (sum[0]["result"] == null)
-      return 0;
+    if (sum[0]["result"] == null) return 0;
     return sum[0]['result'];
   }
 
@@ -166,9 +182,7 @@ class DBHelper {
     var dbConnection = await db;
     var sum = await dbConnection
         .rawQuery('SELECT SUM(amount) AS result FROM tran WHERE isexpense = 1');
-    print("Expense sum: $sum");
-    if (sum[0]["result"] == null)
-      return 0;
+    if (sum[0]["result"] == null) return 0;
     return sum[0]['result'];
   }
 
@@ -180,7 +194,6 @@ class DBHelper {
 
     var totalIncome = await getTotalIncome();
     var totalExpense = await getTotalExpense();
-    print("Income: $totalIncome , Expense: $totalExpense");
     return totalIncome - totalExpense + startingBalances[0]["result"];
   }
 

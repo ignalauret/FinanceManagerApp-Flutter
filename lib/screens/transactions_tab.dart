@@ -14,7 +14,6 @@ class TransactionsScreen extends StatelessWidget {
             child: FutureBuilder<Map<int, List<Transaction>>>(
                 future: DBHelper().getTransactionDayBlocks(),
                 builder: (context, snapshot) {
-                  print("Snapshot data: $snapshot");
                   if (snapshot.data != null) {
                     if (snapshot.hasData) {
                       return ListView.builder(

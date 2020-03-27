@@ -16,6 +16,7 @@ const Color INCOME_COLOR = Color.fromRGBO(29, 183, 150, 1);
 const Color EXPENSE_COLOR = Color.fromRGBO(235, 100, 101, 1);
 
 const Color TEXT_COLOR = Color.fromRGBO(220, 220, 220, 1);
+const Color DANGER_COLOR = Color.fromRGBO(195, 50, 50, 1);
 
 const TextStyle TITLE_STYLE = TextStyle(
   color: Colors.grey,

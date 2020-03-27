@@ -1,5 +1,7 @@
 import 'package:financemanager/Database/db_helper.dart';
+import 'package:financemanager/widgets/modalSheets/new_transaction_sheet.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:intl/intl.dart';
 
 import '../../models/transaction.dart';
@@ -16,8 +18,13 @@ class TransactionListItem extends StatelessWidget {
     DBHelper().deleteTransaction(transaction.id);
   }
 
-  void editTransaction() {
-    print("edit");
+  void editTransaction(BuildContext ctx) {
+    showModalBottomSheet(
+      context: ctx,
+      builder: (_) {
+        return NewTransactionSheet.edit(transaction);
+      },
+    );
   }
 
   @override
@@ -28,8 +35,48 @@ class TransactionListItem extends StatelessWidget {
         if (direction == DismissDirection.endToStart)
           deleteTransaction();
         else
-          editTransaction();
+          editTransaction(context);
       },
+      background: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: <Widget>[
+            Icon(
+              Icons.edit,
+              color: TEXT_COLOR,
+              size: 30,
+            ),
+            SizedBox(
+              width: 10,
+            ),
+            Text(
+              "Editar",
+              style: TextStyle(color: TEXT_COLOR, fontSize: 15),
+            ),
+          ],
+        ),
+      ),
+      secondaryBackground: Container(
+        margin: EdgeInsets.symmetric(horizontal: 15),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: <Widget>[
+            Text(
+              "Borrar",
+              style: TextStyle(color: DANGER_COLOR, fontSize: 15),
+            ),
+            SizedBox(
+              width: 8,
+            ),
+            Icon(
+              Icons.delete,
+              color: DANGER_COLOR,
+              size: 30,
+            ),
+          ],
+        ),
+      ),
       child: Card(
         color: CARDS_COLOR,
         shape: RoundedRectangleBorder(

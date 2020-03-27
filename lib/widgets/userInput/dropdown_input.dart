@@ -20,7 +20,6 @@ class ColorPickerInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    print(colors);
     return Card(
       color: BACKGROUND_COLOR,
       elevation: 0,
@@ -67,7 +66,6 @@ class ColorPickerInput extends StatelessWidget {
                   child: container,
                   value: container,
                 );
-                print(result);
                 return result;
               }).toList(),
               value: colors[pickedColor],

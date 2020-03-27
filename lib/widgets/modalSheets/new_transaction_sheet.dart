@@ -14,7 +14,17 @@ import '../userInput/text_input.dart';
 
 class NewTransactionSheet extends StatefulWidget {
   final bool isExpense;
-  NewTransactionSheet(this.isExpense);
+  final Transaction _transactionToEdit;
+  final bool editMode;
+
+  NewTransactionSheet(this.isExpense)
+      : _transactionToEdit = null,
+        this.editMode = false;
+
+  NewTransactionSheet.edit(this._transactionToEdit)
+      : isExpense = _transactionToEdit.isExpense,
+        this.editMode = true;
+
   @override
   _NewTransactionSheetState createState() => _NewTransactionSheetState();
 }
@@ -22,27 +32,41 @@ class NewTransactionSheet extends StatefulWidget {
 class _NewTransactionSheetState extends State<NewTransactionSheet> {
   String _calculatorInput = "0";
   DateTime _selectedDate = DateTime.now();
-  int selectedCategoryIndex = 0;
+  int _selectedCategoryIndex = 0;
   String _selectedNote = "";
   int _selectedWalletId = 1;
+  bool editModeSetted = false;
+
+  void setEditMode() {
+    _calculatorInput = widget._transactionToEdit.amount.toStringAsFixed(2);
+    _selectedDate = widget._transactionToEdit.date;
+    _selectedNote = widget._transactionToEdit.note;
+    _selectedWalletId = widget._transactionToEdit.walletId;
+    _selectedCategoryIndex = widget.isExpense
+        ? expenseCategories.indexOf(widget._transactionToEdit.category)
+        : incomeCategories.indexOf(widget._transactionToEdit.category);
+    editModeSetted = true;
+  }
 
   void submitData(BuildContext ctx) {
     final enteredNote = _selectedNote;
     final enteredAmount = double.parse(_calculatorInput);
     if (enteredNote.isEmpty || enteredAmount <= 0) return;
-
-    DBHelper().addNewTransaction(
-      Transaction(
-        note: enteredNote,
-        amount: enteredAmount,
-        date: _selectedDate,
-        isExpense: widget.isExpense,
-        walletId: _selectedWalletId,
-        category: widget.isExpense
-            ? expenseCategories[selectedCategoryIndex]
-            : incomeCategories[selectedCategoryIndex],
-      ),
+    Transaction transaction = Transaction(
+      id: widget.editMode ? widget._transactionToEdit.id : null,
+      note: enteredNote,
+      amount: enteredAmount,
+      date: _selectedDate,
+      isExpense: widget.isExpense,
+      walletId: _selectedWalletId,
+      category: widget.isExpense
+          ? expenseCategories[_selectedCategoryIndex]
+          : incomeCategories[_selectedCategoryIndex],
     );
+    if (widget.editMode) {
+      DBHelper().editTransaction(transaction);
+    } else
+      DBHelper().addNewTransaction(transaction);
     Navigator.of(context).pop();
   }
 
@@ -76,7 +100,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
 
   void _selectCategory(int index) {
     setState(() {
-      selectedCategoryIndex = index;
+      _selectedCategoryIndex = index;
     });
   }
 
@@ -88,6 +112,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
 
   @override
   Widget build(BuildContext context) {
+    if (widget.editMode && !editModeSetted) setEditMode();
     return SingleChildScrollView(
       child: Card(
         color: BACKGROUND_COLOR,
@@ -173,7 +198,7 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                   itemBuilder: (ctx, index) {
                     return CategorySelectorCard(
                         index,
-                        index == selectedCategoryIndex,
+                        index == _selectedCategoryIndex,
                         _selectCategory,
                         widget.isExpense);
                   },
@@ -234,8 +259,8 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
                           fit: BoxFit.cover,
                           child: Text(
                             widget.isExpense
-                                ? "Agregar gasto de ${expenseCategories[selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}"
-                                : "Agregar ingreso de ${incomeCategories[selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}",
+                                ? "Agregar gasto de ${expenseCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}"
+                                : "Agregar ingreso de ${incomeCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}",
                             style: TextStyle(
                               color: TEXT_COLOR,
                             ),
