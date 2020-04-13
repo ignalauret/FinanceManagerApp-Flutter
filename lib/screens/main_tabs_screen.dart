@@ -1,6 +1,5 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:financemanager/Database/db_helper.dart';
-import 'package:financemanager/models/transaction.dart';
 import 'package:financemanager/models/wallet.dart';
 import 'package:flutter/material.dart';
 
@@ -40,7 +39,9 @@ class _MainTabsScreenState extends State<MainTabsScreen> {
         context: ctx,
         builder: (_) {
           return NewTransactionSheet(false);
-        }).then((_) {});
+        }).then((_) {
+          rebuild();
+    });
   }
 
   void startAddNewWallet(BuildContext ctx) {

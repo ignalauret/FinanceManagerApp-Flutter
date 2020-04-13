@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:financemanager/Database/db_helper.dart';
 import 'package:financemanager/widgets/modalSheets/new_transaction_sheet.dart';
 import 'package:flutter/material.dart';
@@ -33,12 +31,42 @@ class TransactionListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Dismissible(
-      key: Key(Random().nextInt(10000).toString()),
+      key: Key(transaction.id.toString()),
       onDismissed: (direction) {
         if (direction == DismissDirection.endToStart)
           deleteTransaction();
         else
           editTransaction(context);
+      },
+      confirmDismiss: (direction) {
+        if(direction == DismissDirection.startToEnd) return Future.value(false);
+        return showDialog(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: Text("Seguro que quieres borrar \"${transaction.note}\"?", style: MENU_TEXT_STYLE,),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(CARDS_BORDER_RADIUS),
+            ),
+            backgroundColor: BACKGROUND_COLOR,
+            actions: <Widget>[
+              FlatButton(
+                child: Text(
+                  "Borrar",
+                  style: TextStyle(color: DANGER_COLOR),
+                ),
+                onPressed: () {
+                  Navigator.of(ctx).pop(true);
+                },
+              ),
+              FlatButton(
+                child: Text("No", style: TITLE_STYLE,),
+                onPressed: () {
+                  Navigator.of(ctx).pop(false);
+                },
+              )
+            ],
+          ),
+        );
       },
       background: Container(
         margin: EdgeInsets.symmetric(horizontal: 15),

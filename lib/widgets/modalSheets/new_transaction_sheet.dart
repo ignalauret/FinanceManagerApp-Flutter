@@ -110,168 +110,174 @@ class _NewTransactionSheetState extends State<NewTransactionSheet> {
     });
   }
 
+
   @override
   Widget build(BuildContext context) {
     if (widget.editMode && !editModeSetted) setEditMode();
     return SingleChildScrollView(
-      child: Card(
-        color: BACKGROUND_COLOR,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(20),
-            topRight: Radius.circular(20),
+      reverse: true,
+      child: Padding(
+          padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).viewInsets.bottom),
+        child: Card(
+          color: BACKGROUND_COLOR,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
           ),
-        ),
-        elevation: 0,
-        child: Container(
-          margin: EdgeInsets.only(
-            top: 10,
-            left: 10,
-            right: 10,
-            bottom: 0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: <Widget>[
-                  Text(
-                    "Seleccione una categoria",
-                    style: TITLE_STYLE,
-                  ),
-                  Theme(
-                      data: Theme.of(context).copyWith(
-                        canvasColor: CARDS_COLOR,
-                      ),
-                      child: FutureBuilder<List<Wallet>>(
-                          future: DBHelper().getWallets(),
-                          builder: (context, snapshot) {
-                            if (snapshot != null && snapshot.hasData) {
-                              return DropdownButton<int>(
-                                style: MENU_TEXT_STYLE,
-                                value: snapshot.data
-                                    .firstWhere(
-                                        (wal) => wal.id == _selectedWalletId)
-                                    .id,
-                                items: snapshot.data
-                                    .map((wal) => DropdownMenuItem<int>(
-                                          value: wal.id,
-                                          child: Row(
-                                            children: <Widget>[
-                                              ColorBar(
-                                                color: wal.color,
-                                                fixedHeight: true,
-                                                height: 20,
-                                              ),
-                                              Text(
-                                                wal.name,
-                                                style: MENU_TEXT_STYLE,
-                                              ),
-                                            ],
-                                          ),
-                                        ))
-                                    .toList(),
-                                onChanged: (val) {
-                                  setState(() {
-                                    _selectedWalletId = val;
-                                  });
-                                },
-                              );
-                            }
-                            return new Container(
-                              alignment: AlignmentDirectional.center,
-                              child: new CircularProgressIndicator(),
-                            );
-                          })),
-                ],
-              ),
-              Container(
-                margin: EdgeInsets.symmetric(
-                  vertical: 0,
-                  horizontal: 0,
-                ),
-                width: double.infinity,
-                height: 80,
-                child: ListView.builder(
-                  scrollDirection: Axis.horizontal,
-                  itemBuilder: (ctx, index) {
-                    return CategorySelectorCard(
-                        index,
-                        index == _selectedCategoryIndex,
-                        _selectCategory,
-                        widget.isExpense);
-                  },
-                  itemCount: widget.isExpense
-                      ? expenseCategories.length
-                      : incomeCategories.length,
-                ),
-              ),
-              Text(
-                "Ingrese los detalles",
-                style: TITLE_STYLE,
-              ),
-              TextInput(_newNote, "Nota:", _selectedNote),
-              widget.isExpense
-                  ? DetailInputButton(
-                      label: "Precio:",
-                      color: EXPENSE_COLOR,
-                      value: "-\$$_calculatorInput",
-                      onPressedFun: () {
-                        _showCalculatorDialog(context);
-                      },
-                    )
-                  : DetailInputButton(
-                      label: "Ingreso:",
-                      color: INCOME_COLOR,
-                      value: "+\$$_calculatorInput",
-                      onPressedFun: () {
-                        _showCalculatorDialog(context);
-                      },
+          elevation: 0,
+          child: Container(
+            margin: EdgeInsets.only(
+              top: 10,
+              left: 10,
+              right: 10,
+              bottom: 0,
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    Text(
+                      "Seleccione una categoria",
+                      style: TITLE_STYLE,
                     ),
-              DetailInputButton(
-                label: "Dia:",
-                color: Theme.of(context).primaryColor,
-                value: DateFormat.yMEd().format(_selectedDate),
-                onPressedFun: () {
-                  _presentDatePicker();
-                },
-              ),
-              InkWell(
-                onTap: () => submitData(context),
-                child: Card(
-                  margin: const EdgeInsets.all(10),
-                  color: CARDS_COLOR,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(CARDS_BORDER_RADIUS),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Icon(
-                          Icons.add,
-                          color: Colors.grey,
-                          size: 30,
+                    Theme(
+                        data: Theme.of(context).copyWith(
+                          canvasColor: CARDS_COLOR,
                         ),
-                        FittedBox(
-                          fit: BoxFit.cover,
-                          child: Text(
-                            widget.isExpense
-                                ? "Agregar gasto de ${expenseCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}"
-                                : "Agregar ingreso de ${incomeCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}",
-                            style: TextStyle(
-                              color: TEXT_COLOR,
+                        child: FutureBuilder<List<Wallet>>(
+                            future: DBHelper().getWallets(),
+                            builder: (context, snapshot) {
+                              if (snapshot != null && snapshot.hasData) {
+                                return DropdownButton<int>(
+                                  style: MENU_TEXT_STYLE,
+                                  value: snapshot.data
+                                      .firstWhere(
+                                          (wal) => wal.id == _selectedWalletId)
+                                      .id,
+                                  items: snapshot.data
+                                      .map((wal) => DropdownMenuItem<int>(
+                                            value: wal.id,
+                                            child: Row(
+                                              children: <Widget>[
+                                                ColorBar(
+                                                  color: wal.color,
+                                                  fixedHeight: true,
+                                                  height: 20,
+                                                ),
+                                                Text(
+                                                  wal.name,
+                                                  style: MENU_TEXT_STYLE,
+                                                ),
+                                              ],
+                                            ),
+                                          ))
+                                      .toList(),
+                                  onChanged: (val) {
+                                    setState(() {
+                                      _selectedWalletId = val;
+                                    });
+                                  },
+                                );
+                              }
+                              return new Container(
+                                alignment: AlignmentDirectional.center,
+                                child: new CircularProgressIndicator(),
+                              );
+                            })),
+                  ],
+                ),
+                Container(
+                  margin: EdgeInsets.symmetric(
+                    vertical: 0,
+                    horizontal: 0,
+                  ),
+                  width: double.infinity,
+                  height: 80,
+                  child: ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemBuilder: (ctx, index) {
+                      return CategorySelectorCard(
+                          index,
+                          index == _selectedCategoryIndex,
+                          _selectCategory,
+                          widget.isExpense);
+                    },
+                    itemCount: widget.isExpense
+                        ? expenseCategories.length
+                        : incomeCategories.length,
+                  ),
+                ),
+                Text(
+                  "Ingrese los detalles",
+                  style: TITLE_STYLE,
+                ),
+                TextInput(_newNote, "Nota:", _selectedNote),
+                widget.isExpense
+                    ? DetailInputButton(
+                        label: "Precio:",
+                        color: EXPENSE_COLOR,
+                        value: "-\$$_calculatorInput",
+                        onPressedFun: () {
+                          _showCalculatorDialog(context);
+                        },
+                      )
+                    : DetailInputButton(
+                        label: "Ingreso:",
+                        color: INCOME_COLOR,
+                        value: "+\$$_calculatorInput",
+                        onPressedFun: () {
+                          _showCalculatorDialog(context);
+                        },
+                      ),
+                DetailInputButton(
+                  label: "Dia:",
+                  color: Theme.of(context).primaryColor,
+                  value: DateFormat.yMEd().format(_selectedDate),
+                  onPressedFun: () {
+                    _presentDatePicker();
+                  },
+                ),
+                InkWell(
+                  onTap: () => submitData(context),
+                  child: Card(
+                    margin: const EdgeInsets.all(10),
+                    color: CARDS_COLOR,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(CARDS_BORDER_RADIUS),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Icon(
+                            Icons.add,
+                            color: Colors.grey,
+                            size: 30,
+                          ),
+                          FittedBox(
+                            fit: BoxFit.cover,
+                            child: Text(
+                              widget.isExpense
+                                  ? "Agregar gasto de ${expenseCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}"
+                                  : "Agregar ingreso de ${incomeCategories[_selectedCategoryIndex].toString().split(".").last} el ${_selectedDate.day}",
+                              style: TextStyle(
+                                color: TEXT_COLOR,
+                              ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              )
-            ],
+                )
+              ],
+            ),
           ),
         ),
       ),
